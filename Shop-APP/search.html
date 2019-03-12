@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js" ></script>
+    <script src="js/default.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link href="css/iconfont.css" rel="stylesheet"/>
+    
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    
+    <script type="text/javascript" charset="utf-8">
+    //初始化预加载详情页面
+      	mui.init();
+
+		var detailPage = null;
+		//添加列表项的点击事件
+      	
+      	mui.plusReady(function(){
+      		/*if(!detailPage){
+			    detailPage = plus.webview.getWebviewById('good_detial.html');
+			  }*/
+      	});
+      	
+      	
+      	
+      	function showGoodDetial(gid){
+      		var id = gid;
+			  //获得详情页面
+			  /*if(!detailPage){
+			    detailPage = plus.webview.getWebviewById('good_detial.html');
+			  }*/
+			  //触发详情页面的newsId事件
+			  mui.fire(detailPage,'gId',{
+			    id:id
+			  });
+			//打开详情页面          
+			  mui.openWindow({
+			    url:'good_detial.html?gId='+id
+			    
+			  });
+      	}
+      	$(function(){
+      		$("#search_btn").click(function(e){
+      			var key = $("#search_text").val();
+      			if(key.replace(/^\s+|\s+$/g,"")){
+					var param = "key="+key;
+		      		var reqUrl = hostURL+"/goods/showGoodsByKey";
+		      		$.ajax({
+		      			type:"post",
+		      			url:reqUrl,
+		      			data:param,
+		      			dataType:"json",
+		      			success:function(d){
+		      				var $ul = $("#dataList");
+		      				$ul.empty();
+		      				
+		      				if(d.goods==null || d.goods==''){
+		      					$ul.text("没有找到该商品信息");
+		      				}else{
+		      					console.log(d)
+		      					$.each(d.goods,function(index,g){
+		      						$ul.append("<li class='mui-table-view-cell mui-media'>"+
+							        	"<a href='javascript:void(0);' onclick='showGoodDetial("+g.goodsId+")'>"+
+							            "<img class='mui-media-object mui-pull-left' src='"+staticURL+g.imageUrl+"'>"+
+							            "<div class='mui-media-body'>"+
+						                g.goodsName+
+						                "<p class='mui-ellipsis'> ￥ "+g.promotionPrice+"</p></div></a></li>");
+		      					});
+		      				}
+		      				
+		      			}
+		      		});
+      			}  		
+      		});
+      	});
+      	
+    </script>
+</head>
+<body>
+		<div class="container">
+			
+			<div class="search_row" > 
+				<div class="search_row_back">
+					<input id="search_text" type="text" class="input_search" >
+					<span class="iconfont icon-sousuo1"></span>
+				</div>
+			    <div id="search_btn" class="search_btn" >搜索</div>
+			</div>
+			<div style="margin-top: 2px;">
+				<ul id="dataList" class="mui-table-view">
+				</ul>
+			</div>
+			
+			
+		    <!-- bottom nav start -->
+		    <nav class="mui-bar mui-bar-tab mui-bar-footer" id="nav">
+				<a href="javascript:void(0);" class="mui-tab-item" id="nav1">
+					<span class="mui-icon iconfont icon-shouye"></span>
+					<span class="mui-tab-label">首页</span>
+				</a>
+				<a href="javascript:void(0);"  class="mui-tab-item  mui-active" id="nav2">
+					<span class="mui-icon iconfont icon-sousuo1"></span>
+					<span class="mui-tab-label">搜索</span>
+				</a>
+				<a href="javascript:void(0);" class="mui-tab-item " id="nav3">
+					<span class="mui-icon iconfont icon-gouwuche"></span>
+					<span class="mui-tab-label">购物车</span>
+				</a>
+				<a href="javascript:void(0);"   class="mui-tab-item " id="nav4">
+					<span class="mui-icon iconfont icon-wode"></span>
+					<span class="mui-tab-label">我的</span>
+				</a>
+			</nav>
+			<!-- bottom nav end -->
+		</div>
+		
+		
+		
+		
+</body>
+
+
+</html>

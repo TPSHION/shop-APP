@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet"/>
+	    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+	    <link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+	    <style type="text/css">
+	    	.order-result{
+	    		font-family: "微软雅黑";
+	    		text-align: center;
+	    	}
+	    	.order-result a{
+	    		color: #98c3ff;
+	    		text-underline: initial;
+	    	}
+	    	.orderDetial{
+	    		width: 100%;
+	    		height: 100px;
+	    		font-family: "微软雅黑";
+	    		font-size: 12px;
+	    		line-height: 20px;
+	    		color: #8f8f94;
+	    		padding: 15px 20px;
+	    	}
+	    	#orderStatue{
+	    		width: 100%;
+	    		height: 80px;
+	    		padding: 10px 20px;
+	    	}
+	    	#orderStatue span{
+	    		float: left;
+	    		font-family: "微软雅黑";
+	    		font-size: 16px;
+	    		color: #ffffff;
+	    		padding: 10px 20px;
+	    	}
+			#goodList{
+				color:  #323232;
+				font-size: 16px;
+			}
+	    </style>
+	</head>
+
+	<body>
+		<div class="container">
+			<!--header start -->
+			<header class="mui-bar mui-bar-nav">
+			    <a class="mui-action-back mui-icon iconfont icon-fanhuijiantou mui-pull-left"></a>
+			    <h1 class="mui-title">订单详情</h1>
+			    <a class="mui-icon iconfont mui-icon-home mui-pull-right" href="index.html"></a>
+			</header>
+			<!--header end -->
+			<div class="contentDiv" style="margin-top: 50px;">
+				<div class="jianbianClass" id='orderStatue'>
+					<span>卖家已发货</span>
+					<img src="images/digndan.png" style="height: 60px; width: 60px;float: right;" />
+				</div>
+				<div class="orderDetial">
+				</div>
+				<ul class="mui-table-view" id='goodList'>
+				</ul>
+				<div class="updateStatue"></div>
+			</div>
+			<!-- bottom nav start -->
+		    <nav class="mui-bar mui-bar-tab mui-bar-footer" id="nav">
+			<a href="javascript:void(0);" class="mui-tab-item mui-active" id="nav1">
+				<span class="mui-icon iconfont icon-shouye"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a href="javascript:void(0);"  class="mui-tab-item" id="nav2">
+				<span class="mui-icon iconfont icon-sousuo1"></span>
+				<span class="mui-tab-label">搜索</span>
+			</a>
+			<a href="javascript:void(0);" class="mui-tab-item " id="nav3">
+				<span class="mui-icon iconfont icon-gouwuche"></span>
+				<span class="mui-tab-label">购物车</span>
+			</a>
+			<a href="javascript:void(0);"   class="mui-tab-item " id="nav4">
+				<span class="mui-icon iconfont icon-wode"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		<!-- bottom nav end -->
+		</div>
+	</body>
+<script src="js/mui.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+<script type="text/javascript" src="js/default.js" ></script>
+<script type="text/javascript">
+mui.init();
+function checkText(statueid){
+	var text = '';
+	switch (statueid){
+		case 0:
+			text='付款';
+			break;
+		case 2:
+			text='确认收货';
+			break;
+		default:
+			text='';
+			break;
+	}
+	return text;
+}
+function changeStatue(sid,oid){
+	var oid = oid;
+	$.ajax({
+		url:hostURL+'/gorder/orderChangeState',
+		data:'gorderId='+oid+'&gorderState='+sid,
+		dataType:'json',
+		type:'post',
+		success:function(data){
+		    console.log(data.status)
+			mui.toast(data.message);
+			//window.location='orderDetial.html?orderId='+oid;
+			setInterval('refresh()',1000)
+
+		}
+	});
+}
+function refresh() {
+    location.reload()
+}
+function initOrderDetial(data){
+    console.log(data.orderdetial)
+	var stateText = orderStatue(data.gorderState);
+	$("#orderStatue span").text(stateText);
+	$(".orderDetial").append('<div>订单编号：'+data.gorderId+'</div>');
+	$(".orderDetial").append('<div>创建时间：'+data.createtime+'</div>');
+	$(".orderDetial").append('<div>收货地址：'+data.address.name+'&nbsp;'+data.address.tel+'&nbsp;'
+	+data.address.province+data.address.city
+	+data.address.district+data.address.detial+'</div>');
+	var text = checkText(data.gorderState);
+	console.log(text)
+	if(text!=''){
+		$(".updateStatue").append('<button type="button" class="mui-btn mui-btn-blue" onclick="changeStatue('+(data.gorderState+1)+','+data.gorderId+')">'+text+'</button>');
+	}
+	$.each(data.orderdetialList, function(index,item) {
+	    console.log(item.goods)
+		$('#goodList').append('<li class="mui-table-view-cell mui-media">'
+			+'<img class="mui-media-object mui-pull-left" src='+imageUrl+item.goods.imageUrl+'>'
+			+'<div class="mui-media-body">'
+			+item.goods.goodsName
+			+'<span style="float:right;">￥ '+item.goods.goodsPrice+'</span>'
+			+'<p class="mui-ellipsis">数量：'+item.num+'</p>'
+			+'</div></li>');
+	});
+
+}
+
+
+
+var orderId = $.getUrlVar('orderId');
+	if(parseInt(orderId)<=0){
+		$('#resultImg').attr('src','images/error.png');
+		$('div.order-result span').append("真难过，出错了！<br/>点击<a href='index.html'>这里</a>回到首页！");
+	}else{
+		$.ajax({
+			url:hostURL+'/gorder/selectById/'+orderId,
+			dataType:'json',
+			type:'get',
+			success:function(data){
+			    console.log(data)
+				initOrderDetial(data[0]);
+			}
+		});
+		
+	}
+
+
+</script>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title></title>
+<link href="css/mui.min.css" rel="stylesheet" />
+<style>
+	.mui-card{
+		position: relative;
+		top: 30px;
+		opacity:0.7;
+		color: black;
+		border-radius: 6px;
+	}
+</style>
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">登录</h1>
+	</header>
+	<div class="mui-content">
+		<div class="mui-card">
+			<form id='login-form' class="mui-input-group"  >
+				<div class="mui-input-row">
+					<label>账号</label>
+					<input id='account' name="u.userName" type="text" class="mui-input-clear mui-input" placeholder="请输入用户名">
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input id='password' name="u.password" type="password" name="password" class="mui-input-clear mui-input" placeholder="请输入密码">
+				</div>
+			</form>
+			<div class="mui-content-padded">
+				<button id='login' onclick="login()" class="mui-btn mui-btn-block mui-btn-primary" style="height: 45px;font-size: 15px;">登录</button>
+				<div class="link-area" style="text-align: center;"><a id='reg' >注册账号</a> <span class="spliter">|</span> <a id='forgetPassword'>忘记密码</a>
+				</div>
+			</div>
+		</div>
+	</div>
+<script src="js/mui.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/default.js"></script>
+<script type="application/javascript">
+
+// 是否为空
+function isEmpty(value){
+	var validateReg = /^\S+$/;
+	return validateReg.test(value);
+}
+
+//登录校验
+function login(){
+	var username = $('#account').val();
+	var password = $('#password').val();
+	if(!isEmpty(username)){
+		mui.toast('用户名不能为空');
+		return;
+	}
+	if(!isEmpty(password)){
+		mui.toast('密码不能为空');
+		return;
+	}
+	$.ajax({
+		url:hostURL+"/user/login/"+username+"/"+password,
+		type:"GET",
+		dataType:"json",
+		success:function(data){
+            console.log(data.status)
+			console.log(data)
+			if(data.status==1){
+				storage.setItem('uid',data.data.userId)
+				mui.toast("登陆成功");
+				setInterval('refresh()',1500)
+			}else{
+				mui.toast("用户名或密码错误")
+			}
+		}
+	});
+}
+function refresh(){
+    mui.openWindow("index.html");
+}
+
+// 注册页面
+mui("#reg")[0].addEventListener('tap', function(event) {
+	mui.openWindow({
+		url: 'register.html',
+		id: 'register',
+		preload: true,
+		show: {
+			aniShow: 'pop-in'
+		},
+		styles: {
+			popGesture: 'hide'
+		},
+		waiting: {
+			autoShow: false
+		}
+	});
+});
+</script>
+</body>
+</html>

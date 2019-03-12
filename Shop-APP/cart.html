@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css" />
+		<link type="text/css" rel="stylesheet" href="css/base.css" />
+		<link type="text/css" rel="stylesheet" href="css/module.css" />
+		<style>
+			/*确定按钮*/
+			.button{
+			    border-color: #1E9FFF;
+			    background-color: #1E9FFF;
+			    color: #fff;
+			}
+			/*不可用的确定按钮*/
+			.disabled-button{
+			    border-color: #D4D4D4;
+			    background-color: #D4D4D4;
+			    color: #fff;
+			    cursor:auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <h1 class="mui-title">购物车</h1>
+		</header>
+		<div class="shopping">
+			<div class="shop-group-item">
+				<form id="cartDataListForm">
+				<ul id="dataList">
+					
+				</ul>
+				</form>
+				
+			</div>
+		</div>
+
+		<div class="payment-bar">
+			<div class="all-checkbox"><input type="checkbox" class="check goods-check" id="AllCheck">全选</div>
+			<div class="shop-total">
+				<strong>总价：<i class="total" id="AllTotal">0.00</i></strong>
+			</div>
+			<a href="javascript:void(0);" id="jieshsuanBtn" class="settlement btn disabled-button">结算</a>
+		</div>
+		<!-- bottom nav start -->
+		    <nav class="mui-bar mui-bar-tab mui-bar-footer" id="nav">
+			<a href="javascript:void(0);" class="mui-tab-item" id="nav1">
+				<span class="mui-icon iconfont icon-shouye"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a href="javascript:void(0);"  class="mui-tab-item" id="nav2">
+				<span class="mui-icon iconfont icon-sousuo1"></span>
+				<span class="mui-tab-label">搜索</span>
+			</a>
+			<a href="javascript:void(0);" class="mui-tab-item  mui-active" id="nav3">
+				<span class="mui-icon iconfont icon-gouwuche"></span>
+				<span class="mui-tab-label">购物车</span>
+			</a>
+			<a href="javascript:void(0);"   class="mui-tab-item " id="nav4">
+				<span class="mui-icon iconfont icon-wode"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		<!-- bottom nav end -->
+	</body>
+
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js" ></script>
+	<script type="text/javascript" src="js/default.js" ></script>
+	<script type="text/javascript" src="js/cart.js"></script>
+	<script type="text/javascript">
+		mui.init();
+	</script>
+
+</html>

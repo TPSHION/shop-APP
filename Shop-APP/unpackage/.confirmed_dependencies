@@ -1,0 +1,89 @@
+{
+  "login.html": {
+    "refer": [
+      "index.html",
+      "register.html"
+    ]
+  },
+  "index.html": {
+    "refer": [
+      "search.html",
+      "good_detial.html",
+      "cart.html",
+      "my.html"
+    ]
+  },
+  "search.html": {
+    "refer": [
+      "index.html",
+      "good_detial.html"
+    ]
+  },
+  "good_detial.html": {
+    "refer": [
+      "index.html"
+    ]
+  },
+  "selectAddress.html": {
+    "refer": [
+      "orderResult.html",
+      "cart.html"
+    ]
+  },
+  "orderResult.html": {
+    "refer": [
+      "orderDetial.html",
+      "selectAddress.html"
+    ]
+  },
+  "cart.html": {
+    "refer": [
+      "selectAddress.html",
+      "index.html",
+      "my.html"
+    ]
+  },
+  "my.html": {
+    "refer": [
+      "addressView.html",
+      "orderList.html",
+      "search.html",
+      "userInfo.html",
+      "index.html"
+    ]
+  },
+  "orderDetial.html": {
+    "refer": [
+      "my.html",
+      "orderList.html",
+      "orderResult.html"
+    ]
+  },
+  "addressView.html": {
+    "refer": [
+      "my.html",
+      "addAddress.html"
+    ]
+  },
+  "orderList.html": {
+    "refer": [
+      "orderDetial.html",
+      "my.html"
+    ]
+  },
+  "addAddress.html": {
+    "refer": [
+      "addressView.html"
+    ]
+  },
+  "register.html": {
+    "refer": [
+      "login.html"
+    ]
+  },
+  "userInfo.html": {
+    "refer": [
+      "my.html"
+    ]
+  }
+}

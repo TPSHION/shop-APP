@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<style>
+			.headerDiv {
+				width: 100%;
+				height: 150px;
+			}
+		</style>
+		
+	</head>
+
+	<body>
+		<!-- header div start -->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">收货地址管理</h1>
+			<a class="mui-icon iconfont icon-jiahao1 mui-pull-right" style="color: #007aff;" href="addAddress.html"></a>
+		</header>
+		<!-- header div end -->
+		<div  style="font-size: 14px;margin-top: 50px;">
+			<ul class="mui-table-view" id="dataList">
+
+			</ul>
+		</div>
+
+	</body>
+
+
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script src="js/mui.min.js"></script>
+<script type="text/javascript" src="js/default.js" ></script>
+<script type="text/javascript">
+mui.init();
+$(function($){
+	var uId=storage.getItem('uid');
+	$.ajax({
+				type:"get",
+				url:hostURL+"/address/viewAllAddress/"+uId,
+				dataType:'json',
+				success:function(data){
+					$.each(data, function(index,item) {
+						var str1 = "<li class='mui-table-view-cell mui-media'><a href='javascript:;'><img class='mui-media-object mui-pull-left' src='images/digndan.png'><div class='mui-media-body'>";
+						var str2 = "<p class='mui-ellipsis'>";
+						var str3  = "</p></div></a></li>";
+						$("#dataList").append(str1+item.name+"<br/>"+item.tel+str2
+						+item.province+item.city+item.district+item.detial+str3);
+					});
+				}
+			});
+});
+</script>
+
+
+</html>
+
+

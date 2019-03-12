@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+    	<link href="css/iconfont.css" rel="stylesheet"/>
+    	<link href="css/index.css" rel="stylesheet"/>
+    	
+    	<script type="text/javascript" src="js/jquery.min.js" ></script>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript" src="js/default.js" ></script>
+	<script type="text/javascript">
+
+
+		var params =JSON.parse(storage["params"]) ;
+		console.log(params)
+        console.log(storage)
+        var uId=storage.getItem('uid');
+		$(function($){
+			// var gorder = window.location.href.slice(window.location.href.indexOf('?') + 1);
+            //
+			// console.log(gorder);
+			$.ajax({
+				type:"get",
+				url:hostURL+"/address/viewAllAddress/"+uId,
+				dataType:'json',
+				success:function(data){
+					console.log(data)
+					$.each(data, function(index,item) {
+						$("#dataList").append("<li class='mui-table-view-cell'><a class='mui-navigate-right'>"
+						+"<input type='hidden' name='addressId' value='"+item.addressId+"'>"
+						+item.province+item.city+item.district+item.detial+"</a></li>");
+					});
+				}
+			});
+			
+			
+			//提交订单事件
+			$("#tijiaodingdanBtn").on('tap',function(){
+				var aId = $('.mui-selected input').val();
+				console.log(aId);
+				$.ajax({
+					type:"post",
+					url:hostURL+"/gorder/addGorder",
+					async:true,
+					data:storage["gorder"]+'&addressId='+aId,
+					dataType:'json',
+					success:function(data){
+						console.log(data);
+						if(data.state==1){
+							for(var i=0;i<params.length;i++){
+								params[i].gorderId = data.gorderId;
+							}
+
+							addOrder(params,data.gorderId);
+						}else{
+							mui.toast("提交失败")
+						}
+					}
+				});
+				
+			});
+			
+		});
+		//添加订单详细
+		function addOrder(params,id){
+			$.ajax({
+				type:"post",
+				url:hostURL+"/orderDetail/addOrder",
+				async:true,
+				data:JSON.stringify(params),
+				contentType:'application/json',
+				success:function(data){
+				console.log(storage)
+                     storage.removeItem('params');
+                     console.log(storage);
+                     storage.removeItem('gorder');
+                    console.log(storage);
+            	window.location="orderResult.html?orderId="+id;
+				}
+			});
+		}
+	</script>
+    	
+	</head>
+	<body>
+		<div class="container">
+			<header class="mui-bar mui-bar-nav">
+			    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			    <h1 class="mui-title">收货地址</h1>
+			    <a class="mui-icon iconfont icon-jiahao1 mui-pull-right" href="addAddress2.html" ></a>
+			</header>
+			<div class="contentDiv" >
+				<ul id="dataList" class="mui-table-view mui-table-view-radio">
+				</ul>
+				
+				<div class="cartCaozuoDiv">
+					<button id="tijiaodingdanBtn" type="button" class="mui-btn mui-btn-blue">提交订单</button>
+				</div>
+			</div>
+			<!-- bottom nav start -->
+		    <nav class="mui-bar mui-bar-tab mui-bar-footer" id="nav">
+				<a href="javascript:void(0);" class="mui-tab-item" id="nav1">
+					<span class="mui-icon iconfont icon-shouye"></span>
+					<span class="mui-tab-label">首页</span>
+				</a>
+				<a href="javascript:void(0);"  class="mui-tab-item" id="nav2">
+					<span class="mui-icon iconfont icon-sousuo1"></span>
+					<span class="mui-tab-label">搜索</span>
+				</a>
+				<a href="javascript:void(0);" class="mui-tab-item  mui-active" id="nav3">
+					<span class="mui-icon iconfont icon-gouwuche"></span>
+					<span class="mui-tab-label">购物车</span>
+				</a>
+				<a href="javascript:void(0);"  class="mui-tab-item" id="nav4">
+					<span class="mui-icon iconfont icon-wode"></span>
+					<span class="mui-tab-label">我的</span>
+				</a>
+			</nav>
+		<!-- bottom nav end -->
+		</div>
+		
+	</body>
+	
+</html>

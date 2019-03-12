@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css" />
+		<style type="text/css">
+			.orderli {
+				background-color: ;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!-- header div start -->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的订单</h1>
+		</header>
+		<!-- header div end -->
+		<!-- content start -->
+		<div class="contentDiv">
+			<ul class="mui-table-view" id='orderList'>
+			</ul>
+
+		</div>
+
+		<!-- content end -->
+		<!-- bottom nav start -->
+
+		<!-- bottom nav end -->
+
+	</body>
+
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script src="js/default.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		mui.init();
+		function showDetial(oid){
+			window.location = 'orderDetial.html?orderId='+oid;
+		}
+
+		function initOrderList(list) {
+			var $ul = $("#orderList");
+			var str1 = '<li class="mui-table-view-cell mui-media orderli">' +
+				'<a href="javascript:;" onclick="showDetial(';
+			var str11 = ')">' +
+				'<img class="mui-media-object mui-pull-left" src="images/dingdan1.png"/>' +
+				'<div class="mui-media-body">';
+			var str2 = '<p class="mui-ellipsis">订单时间：';
+			var str3 = '</p></div>' + '</a>' + '</li>';
+			$.each(list, function(index, item) {
+				var stateText = orderStatue(item.gorderState);
+				var time = item.createtime;
+				$ul.append(str1 + item.gorderId + str11 + stateText + str2 + time + str3);
+			});
+		}
+
+		$(function($) {
+			var userId = storage.getItem('uid');
+			$.ajax({
+				type: "get",
+				url: hostURL + "/gorder/orderList/"+userId,
+				dataType: 'json',
+				success: function(data) {
+					if(data.status==0) {
+						mui.toast('您还没有购买过东西，快去下单吧！');
+					} else {
+						initOrderList(data);
+					}
+				}
+			});
+
+		});
+	</script>
+
+</html>

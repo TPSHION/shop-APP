@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<style>
+			.headerDiv {
+				width: 100%;
+				height: 150px;
+			}
+		</style>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/default.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+            var t=2
+            var uId=storage.getItem('uid');
+            function choose(i) {
+                if (uId!=null&&uId!=''){
+                    redirect(i)
+				} else{
+                    mui.toast("请先登录",2000)
+                    setInterval('refresh()',1500)
+				}
+
+            }
+            function refresh() {
+                    location = 'login.html'
+            }
+			function redirect(i) {
+				switch(i) {
+					case 1:
+						window.location = 'orderList.html'
+						break;
+					case 2:
+						window.location = 'addressView.html'
+						break;
+					case 3:
+						window.location = 'userInfo.html'
+						break;
+					default:
+						break;
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<!-- header div start -->
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">个人中心</h1>
+		</header>
+		<!-- header div end -->
+		<div class='jianbianClass headerDiv' id='loginDiv'>
+
+		</div>
+		<div class='' style="font-size: 14px;">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" href="javascript:void(0);" onclick="choose(2)">
+						我的收货地址
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" href="javascript:void(0);" onclick="choose(1)">
+						我的订单
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" href="javascript:void(0);" onclick="choose(3)">
+						个人信息
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<!-- bottom nav start -->
+		<nav class="mui-bar mui-bar-tab mui-bar-footer" id="nav">
+			<a href="javascript:void(0);" class="mui-tab-item" id="nav1">
+				<span class="mui-icon iconfont icon-shouye"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a href="javascript:void(0);" class="mui-tab-item" id="nav2">
+				<span class="mui-icon iconfont icon-sousuo1"></span>
+				<span class="mui-tab-label">搜索</span>
+			</a>
+			<a href="javascript:void(0);" class="mui-tab-item " id="nav3">
+				<span class="mui-icon iconfont icon-gouwuche"></span>
+				<span class="mui-tab-label">购物车</span>
+			</a>
+			<a href="javascript:void(0);" class="mui-tab-item  mui-active" id="nav4">
+				<span class="mui-icon iconfont icon-wode"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		<!-- bottom nav end -->
+
+	</body>
+
+</html>

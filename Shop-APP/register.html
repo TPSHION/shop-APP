@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<link href="css/mui.min.css" rel="stylesheet" />
+<link href="css/mui.picker.css" rel="stylesheet">
+<style>
+	.mui-content{
+		width: 100%;
+		/*background: url(images/timg.jpg) no-repeat;*/
+	}
+	.mui-card{
+		position: relative;
+		top: 30px;
+		opacity:0.7;
+		color: black;
+		border-radius: 6px;
+	}
+</style>
+</head>
+		
+<body>
+<header class="mui-bar mui-bar-nav" style="background-color: #ffffff;">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<h1 class="mui-title">注册</h1>
+</header>
+<div class="mui-content">
+	<div class="mui-card">
+		<form class="mui-input-group" id="reg-form">
+		    <div class="mui-input-row">
+		        <label>用户名</label>
+		    	<input id="username" type="text" name="userName" class="mui-input-clear">
+		    </div>
+		    <div class="mui-input-row">
+		        <label>昵称</label>
+		        <input id="nickname" type="text" name="nickName" class="mui-input-clear">
+		    </div>
+			<div class="mui-input-row">
+				<label>真实姓名</label>
+				<input id="truename" type="text" name="truename" class="mui-input-clear">
+			</div>
+			<div class="mui-input-row">
+				<label>身份证号码</label>
+				<input id="idCard" type="text" name="idCard" class="mui-input-clear">
+			</div>
+
+		    <div class="mui-input-row">
+		        <label>手机</label>
+		    	<input id="phone" type="text"  name="phone" class="mui-input-clear">
+		    </div>
+		    <div class="mui-input-row">
+		        <label>邮箱</label>
+		        <input id="email" type="text" name="email" class="mui-input-clear">
+		    </div>
+			<div class="mui-input-row">
+		        <label>密码</label>
+		        <input id="password" type="password" name="password" class="mui-input-clear mui-input">
+		    </div>
+		    <div class="mui-input-row">
+		        <label>确认密码</label>
+		        <input id="password_confirm" type="password" class="mui-input-clear mui-input">
+		    </div>
+		</form>
+		<div class="mui-content-padded">
+			<button id='reg' class="mui-btn mui-btn-block mui-btn-primary" style="border-radius: 25px; height: 45px;line-height: 10px;width: 80%;margin-left: 30px;">注册</button>
+		</div>
+	</div>
+</div>
+<script src="js/mui.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+<script type="text/javascript" src="js/mui.picker.js"></script>
+<script src="js/default.js"></script>
+<script type="text/javascript">
+	mui.init();
+
+	// 输入参数
+	var regConfig = {
+		username: mui("#username")[0],
+		nickname: mui("#nickname")[0],
+		phone:	  mui("#phone")[0],
+		email:	  mui("#email")[0],
+		idCard:   mui("#idCard")[0],
+		truename:  mui("#truename")[0],
+		password: mui("#password")[0],
+		passwordConfirm: mui("#password_confirm")[0]
+	};		
+	
+	// 注册事件监听
+	mui("#reg")[0].addEventListener('tap',function(){
+		var username = regConfig.username.value;
+		var nickname = regConfig.nickname.value;
+		var phone = regConfig.phone.value;
+		var email = regConfig.email.value;
+		var password = regConfig.password.value;
+		var passwordConfirm = regConfig.passwordConfirm.value;
+		console.log(phone)
+		//用户名非空校验
+		if(!isEmpty(username)){
+			mui.toast("用户名不能为空");
+			return;
+		}
+		// 昵称非空校验
+		if (!isEmpty(nickname)){
+			mui.toast('昵称不能为空');
+			return;
+		}
+		// 电话号码校验
+		if (!(/^1[34578]\d{9}$/).test(phone)){
+            mui.toast("电话号码格式不正确");
+            return;
+        }
+		// 邮箱校验
+		if (!(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+$/.test(email))){
+			mui.toast('邮箱不正确');
+			return;
+		}	
+		// 密码非空校验
+		if (!isEmpty(password)){
+			mui.toast('密码不能为空');
+			return;
+		}
+		// 密码重复校验
+		if (passwordConfirm != password) {
+			mui.toast('密码两次输入不一致');
+			return;
+		}
+		var params =$("#reg-form").serialize();
+		$.ajax({
+			url:hostURL+"/user/register",
+			type:"POST",
+			data:params,
+			dataType:"json",
+			success:function(data){
+			    console.log(data.status)
+				if(data.message=="success"){
+                    mui.toast("注册成功",2000);
+                    setTimeout(jump(),2000);
+
+				}else{
+					mui.toast("注册失败");
+				}
+
+			}
+		});
+	});		
+	
+	// 是否为空
+	function isEmpty(value){
+		var validateReg = /^\S+$/;
+		return validateReg.test(value);
+	}
+	//跳转
+	function jump() {
+        mui.openWindow("login.html")
+    }
+</script>
+</body>
+</html>

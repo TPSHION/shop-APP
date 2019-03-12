@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		<link href="css/mui.picker.css" rel="stylesheet" />
+		<link href="css/mui.poppicker.css" rel="stylesheet" />
+		<style>
+			.mui-btn {
+				font-size: 16px;
+				padding: 8px;
+				margin: 3px;
+			}
+			h5.mui-content-padded {
+				margin-left: 3px;
+				margin-top: 20px !important;
+			}
+			h5.mui-content-padded:first-child {
+				margin-top: 12px !important;
+			}
+			.ui-alert {
+				text-align: center;
+				padding: 20px 10px;
+				font-size: 16px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">登录</h1>
+		</header>
+		<div class="mui-content">
+			<span id="msg" style="display: none;"></span>
+			<form id='form1' class="mui-input-group">
+				<div class="mui-input-row">
+					<label>收件人</label>
+					<input id='name' name="name" type="text" class="mui-input-clear mui-input" placeholder="请输入收件人姓名">
+				</div>
+				<div class="mui-input-row">
+					<label>联系电话</label>
+					<input id='tel' name="tel" type="text" class="mui-input-clear mui-input" placeholder="请输入联系电话">
+				</div>
+				<div class="mui-input-row">
+					<label>所在地区</label>
+					<div id='addressdata' class="mui-input-clear mui-input" style="text-align: left;align-content: center;height: 40px;line-height: 40px;color:#757575;" >
+					请选择所在地区</div>
+				</div>
+				<div class="mui-input-row">
+					<label>详细地址</label>
+				</div>
+				
+			</form>
+			<div class="mui-input-row" >
+					<textarea id="detail" name='detail' form="form1" rows="5" placeholder="请输入街道,小区,门牌号..."></textarea>
+			</div>
+			<div class="mui-content-padded">
+				<button id='add' onclick="doAdd()" class="mui-btn mui-btn-block mui-btn-primary">新增地址</button>
+			</div>
+			<div class="mui-content-padded oauth-area">
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/default.js"></script>
+		<script src="js/mui.picker.js"></script>
+		<script src="js/mui.poppicker.js"></script>
+		<script src="js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+		<script type="application/javascript">
+		(function($, doc) {
+				$.init();
+				$.ready(function() {
+					//-----------------------------------------
+					var _getParam = function(obj, param) {
+						return obj[param] || '';
+					};
+					//-----------------------------------------
+					//					//3级联示例
+					var cityPicker3 = new $.PopPicker({
+						layer: 3
+					});
+					cityPicker3.setData(cityData3);
+					var showCityPickerButton = doc.getElementById('addressdata');
+					var cityResult3 = doc.getElementById('cityResult3');
+					showCityPickerButton.addEventListener('tap', function(event) {
+						cityPicker3.show(function(items) {
+							showCityPickerButton.innerText =  _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+							showCityPickerButton.style.color= "#000";						//返回 false 可以阻止选择框的关闭
+							//return false;
+						});
+					}, false);
+				});
+			})(mui, document);
+			function doAdd(){
+				var p = $("#form1").serialize();
+				var areaStrs = $("#addressdata").text().split(" ");
+				p = p+"&province="+areaStrs[0];
+				p = p+"&city="+areaStrs[1];
+				p = p+"&district="+areaStrs[2];
+				p = p+"&userId="+storage.getItem('uid');
+				$.ajax({
+					type:"post",
+					url:hostURL+"/address/addAddress",
+					data:p,
+					dataType:'text',
+					success:function(data){
+						mui.toast("ADD SUCCESS!");
+						window.location.href="selectAddress.html"
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="js/mui.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+<script type="text/javascript" src="js/default.js" ></script>
+<link href="css/mui.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/index.css" />
+<script type="application/javascript">
+	mui.init();
+	var gClassId = $.getUrlVars()['gClassId'];
+	$(function(){
+		$.ajax({
+			url:hostURL+"/goods/showGoodsByClassifyId",
+			type:"POST",
+			data:"gClassId="+gClassId,
+			dataType:"json",
+//				async:false,
+			success:function(data){
+				var newList = data.goods;
+    		    for(var i=0;i<newList.length;i++){
+    		    	var list = '<li class="mui-table-view-cell mui-media mui-col-xs-6">'+
+				    		        '<a href="good_detial.html?gId='+newList[i].goodsId+'">'+
+				    		            '<img src="'+staticURL+newList[i].imageUrl+'" class="mui-media-object" >'+
+				    		            '<div class="mui-media-body">￥'+newList[i].promotionPrice+''+newList[i].goodsName+'</div>'+
+				    		        '</a>'+
+				    		    '</li>';
+				    $("#goods").append(list);
+				    $(".mui-title").text(newList[0].gclassify.classifyName);
+    		    }
+			}
+		});
+	})
+</script>
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 class="mui-title">母婴用品</h1>
+	</header>
+	<div class="mui-content">
+		<div class="newsDiv">
+	    	<div class="newGoods">
+	    		<ul id="goods" class="mui-table-view mui-grid-view new-list">
+	    		    
+	    		</ul>
+	    	</div>
+	    </div>
+	</div>
+</body>
+
+</html>

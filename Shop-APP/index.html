@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js" ></script>
+    <script src="js/default.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+    <style>
+    	#slider img{
+    		height: 250px;
+    	}
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+      	
+      	/*classify onclick*/
+      	function showClassifyItem(i){
+      		window.location.href="goodClassify.html?gClassId="+i;
+      	}
+      	
+      	$(function(){
+      		//获取新品推荐商品信息
+      		$.ajax({
+				url:hostURL+"/goods/showGoodsByName",
+				type:"POST",
+				data:"name=新品推荐",
+				dataType:"json",
+//				async:false,
+				success:function(data){
+					var newList = data.goods;
+	    		    for(var i=0;i<newList.length;i++){
+	    		    	var list = '<li class="mui-table-view-cell mui-media mui-col-xs-6">'+
+					    		        '<a href="good_detial.html?gId='+newList[i].goodsId+'">'+
+					    		            '<img src="'+staticURL+newList[i].imageUrl+'" class="mui-media-object" >'+
+					    		            '<div class="mui-media-body">￥'+newList[i].promotionPrice+''+newList[i].goodsName+'</div>'+
+					    		        '</a>'+
+					    		    '</li>';
+					    $("#newGoods").append(list);
+	    		    }
+				}
+			});
+			
+			//获取热销商品信息
+      		$.ajax({
+				url:hostURL+"/goods/showGoodsByName",
+				type:"POST",
+				data:"name=热销商品",
+				dataType:"json",
+//				async:false,
+				success:function(data){
+					var sellList = data.goods;
+					for(var i = 0; i < 4; i++) {
+						var list = '<li class="mui-table-view-cell mui-media mui-col-xs-6">'+
+					    		        '<a href="good_detial.html?gId='+sellList[i].goodsId+'">'+
+					    		            '<img src="'+staticURL+sellList[i].imageUrl+'" class="mui-media-object" >'+
+					    		            '<div class="mui-media-body">￥'+sellList[i].promotionPrice+' '+sellList[i].goodsName+'</div>'+
+					    		        '</a>'+
+					    		    '</li>';
+					    $("#sellGoods").append(list);
+					}
+				}
+			});
+				
+			//获取轮播信息
+			$.ajax({
+				url:hostURL+"/goods/showGoodsByName",
+				type:"POST",
+				data:"name=轮播推荐",
+				dataType:"json",
+				success:function(data){
+					var sliderList = data.goods;
+					$("#fist-item a").attr("href","good_detial.html?gId="+sliderList[0].goodsId);
+					$("#fist-item a img").attr("src",staticURL+sliderList[0].imageUrl);
+					
+					for(var i = 0; i < sliderList.length; i++){
+						$("#item a").eq(i).attr("href","good_detial.html?gId="+sliderList[i].goodsId);
+						$("#item a img").eq(i).attr("src",staticURL+sliderList[i].imageUrl)
+					}
+					
+					$("#last-item a").attr("href","good_detial.html?gId="+sliderList[sliderList.length-1].goodsId);
+					$("#last-item a img").attr("src",staticURL+sliderList[sliderList.length-1].imageUrl);
+				}
+			})
+      		
+      	});
+      	
+      	//开启轮播图自动轮播
+      	setTimeout(function(){
+		    var gallery = mui('#slider');
+		    gallery.slider({
+		         interval:2000//自动轮播周期，若为0则不自动播放，默认为0；
+		    });
+		},300)
+
+    </script>
+</head>
+<body>
+<div class="container">
+	<!-- header div start -->
+	<header class="mui-bar mui-bar-nav">
+    	<h1 class="mui-title">首页</h1>
+	</header>
+	<!-- header div end -->
+	<!-- content start -->
+	<div class="contentDiv">
+		<!-- 轮播图 -->
+		<div id="slider" class="mui-slider">
+			<div class="mui-slider-group mui-slider-loop">
+				<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+				<div class="mui-slider-item mui-slider-item-duplicate" id="fist-item">
+					<a href="#"><img src=""></a>
+				</div>
+				<!-- 第一张 -->
+				<div class="mui-slider-item" id="item"><a href="#"><img src=""></a></div>
+				<!-- 第二张 -->
+				<div class="mui-slider-item" id="item"><a href="#"><img src=""></a></div>
+				<!-- 第三张 -->
+				<div class="mui-slider-item" id="item"><a href="#"><img src=""></a></div>
+				<!-- 第四张 -->
+				<div class="mui-slider-item" id="item"><a href="#"><img src=""></a></div>
+				<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+				<div class="mui-slider-item mui-slider-item-duplicate" id="last-item">
+					<a href="#"><img src="img/cbd.jpg"></a>
+				</div>
+			</div>
+			<div class="mui-slider-indicator">
+				<div class="mui-indicator mui-active"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+			</div>
+		</div>
+		
+		<!-- classify start -->
+	    <div id="" class="classify_div">
+	    	<div id="classify_item_1" class="classify_inner_left" onclick="showClassifyItem(1)">
+	    		<div id="" style="width: 100%;height: 70px;margin-top: 20px;float: left;" align="center">
+	    			<img src="images/c1.png" style="width: 50px;height: 60px;"/>
+	    		</div>
+	    		<div id="" style="width: 100%;height: 30px;line-height: 30px;text-align: center;float: left;color: #ffffff;font-size: 16px;">
+	    			母婴用品
+	    		</div>
+		    </div>
+		    <div id="" class="classify_inner_right">
+		    	<div id="classify_item_2" class="classify_div_item classify_div_item_2" onclick="showClassifyItem(2)">
+		    		<div id="" class="div_img">
+		    			<img src="images/c2.png" style="width: 30px;height: 30px;"/>
+		    		</div>
+		    		<div id="" class="div_text">
+		    			奶瓶
+		    		</div>
+		    	</div>
+		    	<div id="classify_item_3" class="classify_div_item classify_div_item_3" onclick="showClassifyItem(3)">
+		    		<div id="" class="div_img" align="center">
+		    			<img  src="images/c3.png" style="width: 32px;height: 30px;"/>
+		    		</div>
+		    		<div id="" class="div_text">
+		    			婴儿床
+		    		</div>
+		    	</div>
+		    	<div id="classify_item_4" class="classify_div_item classify_div_item_4" onclick="showClassifyItem(4)">
+		    		<div id=""  class="div_img">
+		    			<img src="images/c4.png" style="width: 32px;height: 30px;"/>
+		    		</div>
+		    		<div id="" class="div_text">
+		    			婴儿床
+		    		</div>
+		    	</div>
+		    	<div id="classify_item_5" class="classify_div_item classify_div_item_5" onclick="showClassifyItem(5)">
+		    		<div id="" class="div_img" >
+		    			<img src="images/c5.png" style="width: 30px;height: 30px;"/>
+		    		</div>
+		    		<div id="" class="div_text">
+		    			纸尿裤
+		    		</div>
+		    	</div>
+		    </div>
+	    </div>
+	    
+	    
+	    <!-- classify end -->
+	    <!-- new start -->
+	    <div class="newsDiv">
+	    	<h4>新品推荐</h4>
+	    	<img src="images/line_1.png">
+	    	<p>New selling</p>
+	    	<div class="newGoods">
+	    		<ul id="newGoods" class="mui-table-view mui-grid-view new-list">
+	    		    <!--<li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object" >
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>
+	    		    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object" >
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>
+	    		    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object">
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>
+	    		    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object" >
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>-->
+	    		</ul>
+	    		
+	    	</div>
+	    </div>
+	    <!-- new  end -->
+	    
+	    <!-- 热销商品 -->
+	    <div class="newsDiv">
+	    	<h4>热销商品</h4>
+	    	<img src="images/line_1.png">
+	    	<p>Sell well</p>
+	    	<div class="newGoods">
+	    		<ul id="sellGoods" class="mui-table-view mui-grid-view new-list">
+	    		    <!--<li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object" >
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>
+	    		    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object" >
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>
+	    		    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object">
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>
+	    		    <li class="mui-table-view-cell mui-media mui-col-xs-6">
+	    		        <a href="#">
+	    		            <img class="mui-media-object" >
+	    		            <div class="mui-media-body"></div>
+	    		        </a>
+	    		    </li>-->
+	    		</ul>
+	    		
+	    	</div>
+	    </div>
+	    <!-- new  end -->
+	</div>
+	<!-- content end -->
+    <!-- bottom nav start -->
+    <nav class="mui-bar mui-bar-tab mui-bar-footer" id="nav">
+	<a href="javascript:void(0);" class="mui-tab-item mui-active" id="nav1">
+		<span class="mui-icon iconfont icon-shouye"></span>
+		<span class="mui-tab-label">首页</span>
+	</a>
+	<a href="javascript:void(0);"  class="mui-tab-item" id="nav2">
+		<span class="mui-icon iconfont icon-sousuo1"></span>
+		<span class="mui-tab-label">搜索</span>
+	</a>
+	<a href="javascript:void(0);" class="mui-tab-item " id="nav3">
+		<span class="mui-icon iconfont icon-gouwuche"></span>
+		<span class="mui-tab-label">购物车</span>
+	</a>
+	<a href="javascript:void(0);"   class="mui-tab-item " id="nav4">
+		<span class="mui-icon iconfont icon-wode"></span>
+		<span class="mui-tab-label">我的</span>
+	</a>
+</nav>
+<!-- bottom nav end -->
+</div>	
+</body>
+
+
+</html>

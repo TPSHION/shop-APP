@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<link href="css/mui.min.css" rel="stylesheet" />
+</head>
+
+<body style="background: white;">
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 class="mui-title">个人信息</h1>
+	</header>
+	<div class="mui-content">
+		<div class="user-title" style="background: url(img/yuantiao.jpg);height: 180px; text-align: center;">
+			<div class="user-box" style="height: 100px;padding-top: 60px;">
+				<img src="img/cbd.jpg" style="width: 80px;height: 80px; border-radius: 80px;"/>
+				<h4 style="color: white;">用户名</h4>
+			</div>
+		</div>
+		<div class="user-info">
+			<ul class="mui-table-view" style="padding-top: 30px;">
+				<li class="mui-table-view-cell">
+					<a>姓名<span class="mui-pull-right" id="userName">小白</span></a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a>昵称<span class="mui-pull-right" id="nickName">xxx</span></a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a>手机号<span class="mui-pull-right" id="phone">xxxx</span></a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a>邮箱<span class="mui-pull-right" id="email">xxx</span></a>
+				</li>
+			</ul>
+		</div>
+		<div class="user-exit" style="height: 30px;">
+			<ul class="mui-table-view" style="padding-top: 60px;">
+				<li class="mui-table-view-cell" style="text-align: center;background: cornflowerblue;color: white;">
+					<a onclick="logOut();">退出登录</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+<script src="js/mui.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/default.js"></script>
+<script type="text/javascript">
+	mui.init()
+	//获取session中uid
+	var id= parseInt(storage.getItem('uid'));
+	console.log(id)
+    $.ajax({
+        url:hostURL+"/user/getUserInfo/"+id,
+        type:"GET",
+        dataType:"json",
+        success:function(data){
+            console.log(data)
+			document.getElementById('userName').innerText=data.data.userName;
+            document.getElementById('nickName').innerText=data.data.nickName;
+            document.getElementById('phone').innerText=data.data.phone;
+            document.getElementById('email').innerText=data.data.email;
+            // if(data.msg=="success"){
+            // 	saveUser(data.userData.userId);
+            // 	mui.openWindow("index.html");
+            // }else{
+            // 	mui.toast("注册失败");
+            // }
+        }
+    });
+
+	function logOut() {
+	    mui.toast("退出成功！")
+	    storage.removeItem('uid')
+	    setInterval('refresh()',1500)
+    }
+    function refresh() {
+        mui.openWindow("index.html");
+    }
+</script>
+</body>
+</html>
