@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.app.dao.OrderdetailDao">
+  <resultMap id="BaseResultMap" type="com.stm.shop.entity.OrderdetialAssociation">
+    <id column="goods_order_id" jdbcType="INTEGER" property="goodsOrderId" />
+    <result column="gorder_id" jdbcType="INTEGER" property="gorderId" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="price" jdbcType="REAL" property="price" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+    <association column="goods_id" property="goods" select="com.stm.shop.admin.dao.GoodsMapper.findById"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    goods_order_id, gorder_id, goods_id, num, price, createtime, deleteflag
+  </sql>
+
+  <select id="findByGorderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from orderdetial
+    where gorder_id = #{gorderId,jdbcType=INTEGER} and deleteflag IS NULL
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from orderdetial
+    where gorder_id = #{gorderId,jdbcType=INTEGER} and deleteflag IS NULL
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from orderdetial
+    where goods_order_id = #{goodsOrderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.stm.shop.entity.Orderdetial">
+    insert into orderdetial (goods_order_id, gorder_id, goods_id, 
+      num, price, createtime, 
+      deleteflag)
+    values (#{goodsOrderId,jdbcType=INTEGER}, #{gorderId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, 
+      #{num,jdbcType=INTEGER}, #{price,jdbcType=REAL}, #{createtime,jdbcType=TIMESTAMP}, 
+      NULL)
+  </insert>
+  <insert id="insertSelective" parameterType="com.stm.shop.entity.Orderdetial">
+    insert into orderdetial
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="goodsOrderId != null">
+        goods_order_id,
+      </if>
+      <if test="gorderId != null">
+        gorder_id,
+      </if>
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="deleteflag != null">
+        deleteflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="goodsOrderId != null">
+        #{goodsOrderId,jdbcType=INTEGER},
+      </if>
+      <if test="gorderId != null">
+        #{gorderId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=REAL},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.stm.shop.entity.Orderdetial">
+    update orderdetial
+    <set>
+      <if test="gorderId != null">
+        gorder_id = #{gorderId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null">
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=REAL},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        deleteflag = #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where goods_order_id = #{goodsOrderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.stm.shop.entity.Orderdetial">
+    update orderdetial
+    set gorder_id = #{gorderId,jdbcType=INTEGER},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      price = #{price,jdbcType=REAL},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      deleteflag = #{deleteflag,jdbcType=INTEGER}
+    where goods_order_id = #{goodsOrderId,jdbcType=INTEGER}
+  </update>
+
+
+
+
+  <!-- 添加订单 -->
+  <insert id="insertOrder" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+    insert into orderdetial (gorder_id,goods_id,num,price)
+    VALUES
+    <foreach item="item" collection="list" separator=",">
+      (#{item.gorderId},#{item.goodsId}, #{item.num}, #{item.price})
+    </foreach>
+  </insert>
+</mapper>

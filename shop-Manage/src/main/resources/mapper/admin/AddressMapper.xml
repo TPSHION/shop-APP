@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.admin.dao.AddressMapper">
+    <resultMap id="BaseResultMap" type="com.stm.shop.entity.Address">
+        <id column="address_id" jdbcType="INTEGER" property="addressId" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="province" jdbcType="VARCHAR" property="province" />
+        <result column="city" jdbcType="VARCHAR" property="city" />
+        <result column="district" jdbcType="VARCHAR" property="district" />
+        <result column="detial" jdbcType="VARCHAR" property="detial" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="tel" jdbcType="VARCHAR" property="tel" />
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+        <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        address_id, user_id, province, city, district, detial, `name`, tel, createtime, deleteflag
+    </sql>
+    <select id="findById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from address
+        where address_id = #{addressId,jdbcType=INTEGER}
+    </select>
+</mapper>

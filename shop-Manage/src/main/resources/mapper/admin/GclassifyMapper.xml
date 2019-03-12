@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.admin.dao.GclassifyMapper">
+    <resultMap id="BaseResultMap" type="com.stm.shop.entity.Gclassify">
+        <id column="gclass_id" jdbcType="INTEGER" property="gclassId" />
+        <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
+        <result column="fid" jdbcType="INTEGER" property="fid" />
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+        <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+    </resultMap>
+    <resultMap id="AssociationMap" extends="BaseResultMap" type="com.stm.shop.entity.GclassifyAssociation">
+        <association column="fid" property="gclassify" select="findById"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        gclass_id, classify_name, fid, createtime, deleteflag
+    </sql>
+    <select id="findById" parameterType="java.lang.Integer" resultMap="AssociationMap">
+        select
+        <include refid="Base_Column_List" />
+        from gclassify
+        where gclass_id = #{gclassId,jdbcType=INTEGER}
+    </select>
+
+    <select id="getList" resultMap="AssociationMap">
+        select
+        <include refid="Base_Column_List" />
+        from gclassify
+        WHERE deleteflag is null
+    </select>
+
+    <select id="findByClassifyName" parameterType="string" resultMap="AssociationMap">
+        select
+        <include refid="Base_Column_List" />
+        from gclassify
+        WHERE classify_name=#{classifyName}
+        AND deleteflag is null
+    </select>
+
+    <insert id="addClassify" parameterType="com.stm.shop.entity.Gclassify">
+        insert into gclassify (classify_name, fid,deleteflag)
+        values (#{classifyName,jdbcType=VARCHAR}, #{fid,jdbcType=INTEGER},NULL)
+    </insert>
+
+    <select id="findByFid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from gclassify
+        where fid = #{fid,jdbcType=INTEGER}
+    </select>
+
+    <update id="recycleClassifyAndChildren" parameterType="java.util.Set">
+        UPDATE gclassify
+        SET deleteflag=unix_timestamp(now())
+        WHERE gclass_id IN 
+        <foreach collection="idSet" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="recoverClassifyAndParents" parameterType="java.util.Set">
+        UPDATE gclassify
+        SET deleteflag=NULL
+        WHERE gclass_id IN
+        <foreach collection="idSet" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getSoftDelList" resultMap="AssociationMap">
+        select
+        <include refid="Base_Column_List" />
+        from gclassify
+        WHERE deleteflag is not null
+    </select>
+
+    <update id="update" parameterType="com.stm.shop.entity.Gclassify">
+        update gclassify
+        <set>
+            <if test="classifyName != null">
+                classify_name = #{classifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="fid != null">
+                fid = #{fid,jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteflag != null">
+                deleteflag = #{deleteflag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where gclass_id = #{gclassId,jdbcType=INTEGER}
+    </update>
+
+    <delete id="hardDeleteByGclassIds" parameterType="java.util.Set">
+        DELETE
+        FROM gclassify
+        WHERE gclass_id IN
+        <foreach collection="idSet" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from gclassify
+        where gclass_id = #{gclassId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertSelective" parameterType="com.stm.shop.entity.Gclassify">
+        insert into gclassify
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gclassId != null">
+                gclass_id,
+            </if>
+            <if test="classifyName != null">
+                classify_name,
+            </if>
+            <if test="fid != null">
+                fid,
+            </if>
+            <if test="createtime != null">
+                createtime,
+            </if>
+            <if test="deleteflag != null">
+                deleteflag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gclassId != null">
+                #{gclassId,jdbcType=INTEGER},
+            </if>
+            <if test="classifyName != null">
+                #{classifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="fid != null">
+                #{fid,jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteflag != null">
+                #{deleteflag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.stm.shop.entity.Gclassify">
+        update gclassify
+        set classify_name = #{classifyName,jdbcType=VARCHAR},
+        fid = #{fid,jdbcType=INTEGER},
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+        deleteflag = #{deleteflag,jdbcType=INTEGER}
+        where gclass_id = #{gclassId,jdbcType=INTEGER}
+    </update>
+
+    <select id="classifyCount" resultType="java.util.HashMap">
+        SELECT gclassify.classify_name AS 'name',
+              IFNULL(count(goods.gclass_id), 0) AS 'value'
+        FROM gclassify LEFT JOIN goods
+          ON gclassify.gclass_id = goods.gclass_id
+        WHERE gclassify.deleteflag IS NULL
+        GROUP BY gclassify.classify_name
+    </select>
+</mapper>

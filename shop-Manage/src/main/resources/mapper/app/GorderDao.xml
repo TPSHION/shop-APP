@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.app.dao.GorderDao">
+  <resultMap id="BaseResultMap" type="com.stm.shop.entity.GorderAssociation">
+    <id column="gorder_id" jdbcType="INTEGER" property="gorderId" />
+    <result column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="total" jdbcType="REAL" property="total" />
+    <result column="gorder_state" jdbcType="INTEGER" property="gorderState" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+    <association column="user_id" property="user" select="com.stm.shop.admin.dao.UserMapper.findById"/>
+    <association column="address_id" property="address" select="com.stm.shop.admin.dao.AddressMapper.findById"/>
+    <collection column="gorder_id" property="orderdetialList" select="com.stm.shop.app.dao.OrderdetailDao.findByGorderId"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    gorder_id, address_id, user_id, total, gorder_state, createtime, deleteflag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from gorder
+    where gorder_id = #{gorderId,jdbcType=INTEGER} and deleteflag IS NULL
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from gorder
+    where gorder_id = #{gorderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.stm.shop.entity.Gorder">
+    insert into gorder (gorder_id, address_id, user_id, 
+      total, gorder_state, createtime, 
+      deleteflag)
+    values (#{gorderId,jdbcType=INTEGER}, #{addressId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{total,jdbcType=REAL}, #{gorderState,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      NULL )
+  </insert>
+  <insert id="insertSelective" parameterType="com.stm.shop.entity.Gorder">
+    insert into gorder
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gorderId != null">
+        gorder_id,
+      </if>
+      <if test="addressId != null">
+        address_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="total != null">
+        total,
+      </if>
+      <if test="gorderState != null">
+        gorder_state,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="deleteflag != null">
+        deleteflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gorderId != null">
+        #{gorderId,jdbcType=INTEGER},
+      </if>
+      <if test="addressId != null">
+        #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        #{total,jdbcType=REAL},
+      </if>
+      <if test="gorderState != null">
+        #{gorderState,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.stm.shop.entity.Gorder">
+    update gorder
+    <set>
+      <if test="addressId != null">
+        address_id = #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        total = #{total,jdbcType=REAL},
+      </if>
+      <if test="gorderState != null">
+        gorder_state = #{gorderState,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        deleteflag = #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where gorder_id = #{gorderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.stm.shop.entity.Gorder">
+    update gorder
+    set address_id = #{addressId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      total = #{total,jdbcType=REAL},
+      gorder_state = #{gorderState,jdbcType=INTEGER},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      deleteflag = #{deleteflag,jdbcType=INTEGER}
+    where gorder_id = #{gorderId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select * from gorder
+    where user_id=#{userId,jdbcType=INTEGER} and deleteflag IS NULL
+  </select>
+  <update id="orderChangeState" parameterType="java.lang.Integer" >
+    update gorder
+    set
+     gorder_state = #{gorderState,jdbcType=INTEGER}
+     where  gorder_id = #{gorderId,jdbcType=INTEGER}
+  </update>
+
+  <!-- 添加订单 -->
+  <insert id="insertGorder" parameterType="com.stm.shop.entity.Gorder" useGeneratedKeys="true" keyProperty="gorderId">
+        insert into gorder (gorder_id,address_id,user_id,total,gorder_state,createtime,deleteflag)
+        VALUES (DEFAULT, #{addressId}, #{userId}, #{total}, 0, DEFAULT, NULL);
+    </insert>
+</mapper>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+	<title>商品种类回收站-贝贝母婴后台管理系统</title>
+	<th:block th:fragment="row(classify)">
+        <th:block th:text="${classify.classifyName}"></th:block>
+        <th:block th:if="${classify.fid!=0}">
+            <<th:block th:include="this::row(${classify.gclassify})"></th:block>
+        </th:block>
+	</th:block>
+</head>
+<body>
+<div class="main-wrap">
+	<div th:replace="admin/public/left-menu::left-menu"></div>
+	<div class="content-wrap">
+		<header th:replace="admin/public/top-menu::top-menu"></header>
+		<main class="main-cont content mCustomScrollbar">
+			<div class="page-wrap">
+				<!--开始::内容-->
+				<section class="page-hd">
+					<header>
+						<h2 class="title">商品种类回收站</h2>
+						<p class="title-description">
+							已被软删除的商品种类，不可用
+						</p>
+					</header>
+					<hr>
+				</section>
+				<table class="table table-bordered table-striped table-hover">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>种类名称</th>
+						<th>完整归类</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="item:${list}" class="cen">
+                        <td th:text="${item.gclassId}"></td>
+						<td th:text="${item.classifyName}"></td>
+						<td th:include="this::row(${item})" th:class="rt"></td>
+						<td th:text="${#dates.format(item.createtime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td>
+                            <a title="编辑" th:onclick="'javascript:edit('+${item.gclassId}+');'">编辑</a>
+                            <a title="恢复" th:onclick="'javascript:recover('+${item.gclassId}+');'">恢复</a>
+							<a title="彻底删除" th:onclick="'javascript:del('+${item.gclassId}+');'">彻底删除</a>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<!--开始::结束-->
+			</div>
+		</main>
+		<footer th:replace="admin/public/footer::footer"></footer>
+	</div>
+</div>
+</body>
+<script>
+    /*编辑信息页面*/
+	function edit(id) {
+        var title = '信息编辑';
+        var w = 700;
+        var h = 400;
+        var url = baseName+"/admin/classify/classifyEditView"+"?id="+id;
+        $.get(url);
+        layer_show(title,url,w,h);
+    }
+
+    /*恢复*/
+    function recover(id) {
+        layer.confirm('确定要恢复当前种类及其父类别吗？', {
+            btn: ['恢复','取消'] //按钮
+        }, function(){
+
+            var url =  baseName + "/admin/classify/recoverClassify";
+            $.get(url,{"id":id},function(data){
+				if (data.state == 1){
+                    layer.msg(data.msg, {icon: 1,time:1500});
+                    setTimeout(refresh,1500);//重置表单
+				}else{
+                    layer.msg(data.msg, {icon: 2,time:1500});
+				}
+			},"json");
+
+        }, function(){});
+    }
+
+    /*彻底删除*/
+    function del(id) {
+        layer.confirm('删除后不可恢复，确定要删除当前种类及其子类别吗？', {
+            btn: ['删了吧','先留着'] //按钮
+        }, function(){
+
+            var url =  baseName + "/admin/classify/hardDelete";
+            $.get(url,{"id":id},function(data){
+                if (data.state == 1){
+                    layer.msg(data.msg, {icon: 1,time:1500});
+                    setTimeout(refresh,1500);//重置表单
+                }else{
+                    layer.msg(data.msg, {icon: 2,time:2000});
+                }
+            },"json");
+
+        }, function(){});
+    }
+
+</script>
+</html>

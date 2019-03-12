@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+	<title>商品种类列表-贝贝母婴后台管理系统</title>
+	<th:block th:fragment="row(classify)">
+        <th:block th:text="${classify.classifyName}"></th:block>
+        <th:block th:if="${classify.fid!=0}">
+            <<th:block th:include="this::row(${classify.gclassify})"></th:block>
+        </th:block>
+	</th:block>
+</head>
+<body>
+<div class="main-wrap">
+	<div th:replace="admin/public/left-menu::left-menu"></div>
+	<div class="content-wrap">
+		<header th:replace="admin/public/top-menu::top-menu"></header>
+		<main class="main-cont content mCustomScrollbar">
+			<div class="page-wrap">
+				<!--开始::内容-->
+				<section class="page-hd">
+					<header>
+						<h2 class="title">商品种类列表</h2>
+						<p class="title-description">
+							商品种类列表及其管理
+						</p>
+					</header>
+					<hr>
+				</section>
+				<table class="table table-bordered table-striped table-hover">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>种类名称</th>
+						<th>完整归类</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="item:${list}" class="cen">
+                        <td th:text="${item.gclassId}"></td>
+						<td th:text="${item.classifyName}"></td>
+						<td th:include="this::row(${item})" th:class="rt"></td>
+						<td th:text="${#dates.format(item.createtime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td>
+                            <a title="编辑" th:onclick="'javascript:edit('+${item.gclassId}+');'">编辑</a>
+                            <a title="删除" th:onclick="'javascript:del('+${item.gclassId}+');'">删除</a>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<!--开始::结束-->
+			</div>
+		</main>
+		<footer th:replace="admin/public/footer::footer"></footer>
+	</div>
+</div>
+</body>
+<script>
+    /*编辑信息页面*/
+	function edit(id) {
+        var title = '信息编辑';
+        var w = 700;
+        var h = 400;
+        var url = baseName+"/admin/classify/classifyEditView"+"?id="+id;
+        $.get(url);
+        layer_show(title,url,w,h);
+    }
+
+    /*软删除*/
+    function del(id) {
+        layer.confirm('确定要删除当前种类及其子类吗？', {
+            btn: ['是的','不删'] //按钮
+        }, function(){
+
+            var url =  baseName + "/admin/classify/recycleClassify";
+            $.get(url,{"id":id},function(data){
+				if (data.state == 1){
+                    layer.msg(data.msg, {icon: 1,time:1500});
+                    setTimeout(refresh,1500);//重置表单
+				}else{
+                    layer.msg(data.msg, {icon: 2,time:1500});
+				}
+			},"json");
+
+        }, function(){});
+    }
+
+</script>
+</html>

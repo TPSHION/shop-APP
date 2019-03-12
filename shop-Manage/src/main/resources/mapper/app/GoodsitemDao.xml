@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.dao.GoodsitemMapper">
+  <resultMap id="BaseResultMap" type="com.stm.shop.entity.Goodsitem">
+    <id column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    item_id, item_name, goods_id, num, createtime, deleteflag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from goodsitem
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goodsitem
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.stm.shop.entity.Goodsitem">
+    insert into goodsitem (item_id, item_name, goods_id, 
+      num, createtime, deleteflag
+      )
+    values (#{itemId,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR}, #{goodsId,jdbcType=INTEGER}, 
+      #{num,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, NULL)
+  </insert>
+  <insert id="insertSelective" parameterType="com.stm.shop.entity.Goodsitem">
+    insert into goodsitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="itemName != null">
+        item_name,
+      </if>
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="deleteflag != null">
+        deleteflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.stm.shop.entity.Goodsitem">
+    update goodsitem
+    <set>
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null">
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        deleteflag = #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.stm.shop.entity.Goodsitem">
+    update goodsitem
+    set item_name = #{itemName,jdbcType=VARCHAR},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      deleteflag = #{deleteflag,jdbcType=INTEGER}
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+</mapper>

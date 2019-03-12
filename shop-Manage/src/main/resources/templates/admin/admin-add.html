@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+    <title>添加管理员-贝贝母婴后台管理系统</title>
+</head>
+<body>
+<div class="main-wrap">
+	<div th:replace="admin/public/left-menu::left-menu"></div>
+	<div class="content-wrap">
+		<header th:replace="admin/public/top-menu::top-menu"></header>
+		<main class="main-cont content mCustomScrollbar">
+			<div class="page-wrap">
+				<!--开始::内容-->
+				<section class="page-hd">
+					<header>
+						<h2 class="title">添加管理员</h2>
+						<p class="title-description">
+							添加普通权限管理员信息
+						</p>
+					</header>
+					<hr>
+				</section>
+				<form method="post" id="form">
+					<div class="form-group-col-2">
+						<div class="form-label">管理员名称：</div>
+						<div class="form-cont">
+							<input type="text" th:value="${admin?.name}" name="name" placeholder="登录名称..." class="form-control form-boxed" style="width:300px;">
+						</div>
+					</div>
+					<div class="form-group-col-2">
+						<div class="form-label">登录密码：</div>
+						<div class="form-cont">
+							<input type="text" th:value="${admin?.password}" name="password" placeholder="登录密码..." class="form-control form-boxed" style="width:300px;">
+						</div>
+					</div>
+					<div class="form-group-col-2">
+						<div class="form-label">电子邮箱：</div>
+						<div class="form-cont">
+							<input type="email" th:value="${admin?.email}" name="email" placeholder="电子邮箱..." class="form-control form-boxed" style="width:300px;">
+						</div>
+					</div>
+					<div class="form-group-col-2">
+						<div class="form-label"></div>
+						<div class="form-cont">
+							<input type="submit" class="btn btn-primary" value="提交表单" />
+						</div>
+					</div>
+				</form>
+				<!--开始::结束-->
+			</div>
+		</main>
+		<footer th:replace="admin/public/footer::footer"></footer>
+	</div>
+</div>
+</body>
+<script th:src="@{/admin/plugs/nice-validator/jquery.validator.min.js?local=zh-CN}"></script>
+<script th:inline="javascript">
+    //表单验证规则
+    $("#form").validator({
+        theme:'bootstrap',  //主题
+        timely:3,           //输入框失去焦点和改变值并且详细提示每个规则的结果
+        focusCleanup:true,  //输入框获得焦点时清除验证消息
+        stopOnError:false,   //在第一次错误时停止验证
+        showOk :'完成',     //否显示成功提示
+        fields: {           //需要验证的字段及其规则
+            name:{
+                rule:"管理员名称:required;length(1~20)"
+            },
+            password:"密码:required;length(6~20)",
+            email:"邮箱:required;email"
+        }
+    });
+
+	/*提交表单*/
+    $('#form').on('valid.form', function(e, form){
+        $.ajax({
+            type: "POST",
+            url: baseName+"/admin/admin/adminAdd",
+            data: $("#form").serialize(),
+            success : function (data) {
+                if (data.state == 1){
+                    layer.msg(data.msg, {icon: 1,time:1500});
+                    setTimeout(refresh,1500);//重置表单
+                }else{
+                    layer.msg(data.msg, {icon: 2,time:1500});
+                }
+            }
+        })
+    });
+</script>
+</html>

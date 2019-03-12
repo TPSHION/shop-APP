@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.app.dao.GoodsDao">
+  <resultMap id="BaseResultMap" type="com.stm.shop.entity.GoodsAssociaGoodsitem">
+    <id column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="gclass_id" jdbcType="INTEGER" property="gclassId" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="goods_stock" jdbcType="INTEGER" property="goodsStock" />
+    <result column="goods_price" jdbcType="REAL" property="goodsPrice" />
+    <result column="promotion_price" jdbcType="REAL" property="promotionPrice" />
+    <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="content" property="content" jdbcType="VARCHAR"/>
+    <result column="average_grade" jdbcType="REAL" property="averageGrade" />
+    <result column="brand" jdbcType="VARCHAR" property="brand" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+
+    <association property="gclassify" javaType="com.stm.shop.entity.Gclassify">
+      <id column="gclass_id" property="gclassId" jdbcType="INTEGER" />
+      <result column="classify_name" property="classifyName" jdbcType="VARCHAR" />
+    </association>
+
+    <collection property="goodsitems" ofType="com.stm.shop.entity.Goodsitem">
+      <id column="item_id" property="itemId" jdbcType="INTEGER" />
+      <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+      <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+      <result column="num" property="num" jdbcType="INTEGER" />
+    </collection>
+
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.stm.shop.entity.Goods">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    goods_id, gclass_id, goods_name, goods_stock, goods_price, promotion_price, image_url, 
+    average_grade, brand, createtime, deleteflag
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from goods
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.stm.shop.entity.Goods">
+    insert into goods (goods_id, gclass_id, goods_name, 
+      goods_stock, goods_price, promotion_price, 
+      image_url, average_grade, brand, 
+      createtime, deleteflag, content
+      )
+    values (#{goodsId,jdbcType=INTEGER}, #{gclassId,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, 
+      #{goodsStock,jdbcType=INTEGER}, #{goodsPrice,jdbcType=REAL}, #{promotionPrice,jdbcType=REAL}, 
+      #{imageUrl,jdbcType=VARCHAR}, #{averageGrade,jdbcType=REAL}, #{brand,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, NULL, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.stm.shop.entity.Goods">
+    insert into goods
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="gclassId != null">
+        gclass_id,
+      </if>
+      <if test="goodsName != null">
+        goods_name,
+      </if>
+      <if test="goodsStock != null">
+        goods_stock,
+      </if>
+      <if test="goodsPrice != null">
+        goods_price,
+      </if>
+      <if test="promotionPrice != null">
+        promotion_price,
+      </if>
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="averageGrade != null">
+        average_grade,
+      </if>
+      <if test="brand != null">
+        brand,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="deleteflag != null">
+        deleteflag,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="gclassId != null">
+        #{gclassId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsName != null">
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsStock != null">
+        #{goodsStock,jdbcType=INTEGER},
+      </if>
+      <if test="goodsPrice != null">
+        #{goodsPrice,jdbcType=REAL},
+      </if>
+      <if test="promotionPrice != null">
+        #{promotionPrice,jdbcType=REAL},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="averageGrade != null">
+        #{averageGrade,jdbcType=REAL},
+      </if>
+      <if test="brand != null">
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        #{deleteflag,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.stm.shop.entity.Goods">
+    update goods
+    <set>
+      <if test="gclassId != null">
+        gclass_id = #{gclassId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsName != null">
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsStock != null">
+        goods_stock = #{goodsStock,jdbcType=INTEGER},
+      </if>
+      <if test="goodsPrice != null">
+        goods_price = #{goodsPrice,jdbcType=REAL},
+      </if>
+      <if test="promotionPrice != null">
+        promotion_price = #{promotionPrice,jdbcType=REAL},
+      </if>
+      <if test="imageUrl != null">
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="averageGrade != null">
+        average_grade = #{averageGrade,jdbcType=REAL},
+      </if>
+      <if test="brand != null">
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        deleteflag = #{deleteflag,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.stm.shop.entity.Goods">
+    update goods
+    set gclass_id = #{gclassId,jdbcType=INTEGER},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      goods_stock = #{goodsStock,jdbcType=INTEGER},
+      goods_price = #{goodsPrice,jdbcType=REAL},
+      promotion_price = #{promotionPrice,jdbcType=REAL},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      average_grade = #{averageGrade,jdbcType=REAL},
+      brand = #{brand,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      deleteflag = #{deleteflag,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.stm.shop.entity.Goods">
+    update goods
+    set gclass_id = #{gclassId,jdbcType=INTEGER},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      goods_stock = #{goodsStock,jdbcType=INTEGER},
+      goods_price = #{goodsPrice,jdbcType=REAL},
+      promotion_price = #{promotionPrice,jdbcType=REAL},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      average_grade = #{averageGrade,jdbcType=REAL},
+      brand = #{brand,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      deleteflag = #{deleteflag,jdbcType=INTEGER}
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="searchKey" parameterType="java.lang.String" resultType="com.stm.shop.entity.Goods">
+    select * from goods
+    where goods_name like '%${goodsName}%' and deleteflag IS NULL
+  </select>
+
+
+
+  <sql id="GoodsAndGclassify">
+        g.goods_id, g.gclass_id, g.goods_name, g.goods_stock, g.goods_price, g.promotion_price, g.average_grade,
+        g.brand, g.createtime, g.deleteflag,g.image_url,g.content,
+        f.gclass_id, f.classify_name, f.createtime, f.deleteflag
+    </sql>
+  <!--更具分类名称查询商品信息-->
+  <select id="slectByClassifyNmae" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="GoodsAndGclassify"/>
+    from goods g LEFT JOIN gclassify f
+    on g.gclass_id = f.gclass_id
+    where g.deleteflag IS NULL and f.classify_name=#{name}
+  </select>
+
+  <sql id="GoodsAndGoodsitem">
+        g.goods_id, g.gclass_id, g.goods_name, g.goods_stock, g.goods_price, g.promotion_price, g.average_grade,
+        g.brand, g.createtime, g.deleteflag,g.image_url,g.content,
+        i.item_id, i.item_name, i.goods_id, i.num, i.createtime, i.deleteflag
+    </sql>
+  <!-- 根据商品id查询商品信息 -->
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="GoodsAndGoodsitem"/>
+    from goods g LEFT JOIN goodsitem i
+    on g.goods_id = i.goods_id
+    where g.deleteflag IS NULL and g.goods_id = #{id}
+  </select>
+
+  <sql id="GoodsAndGclassify1">
+        g.goods_id, g.gclass_id, g.goods_name, g.goods_stock, g.goods_price, g.promotion_price, g.average_grade,
+        g.brand, g.createtime, g.deleteflag,g.image_url,g.content,
+        f.gclass_id, f.classify_name, f.createtime, f.deleteflag
+  </sql>
+  <!--根据分类id查询商品列表-->
+  <select id="selectByClassifyId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="GoodsAndGclassify1"/>
+    from goods g LEFT JOIN gclassify f
+    on g.gclass_id = f.gclass_id
+    where g.deleteflag IS NULL and g.gclass_id=#{id}
+  </select>
+
+  <!-- 根据关键字匹配所有商品 -->
+  <select id="selectByKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from goods
+    <where>
+      deleteflag IS NULL
+      AND goods_name LIKE "%"#{key}"%"
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.admin.dao.GorderMapper">
+    <resultMap id="BaseResultMap" type="com.stm.shop.entity.GorderAssociation">
+        <id column="gorder_id" jdbcType="INTEGER" property="gorderId" />
+        <result column="address_id" jdbcType="INTEGER" property="addressId" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="total" jdbcType="REAL" property="total" />
+        <result column="gorder_state" jdbcType="INTEGER" property="gorderState" />
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+        <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+        <association column="user_id" property="user" select="com.stm.shop.admin.dao.UserMapper.findById"/>
+        <association column="address_id" property="address" select="com.stm.shop.admin.dao.AddressMapper.findById"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      gorder_id, address_id, user_id, total, gorder_state, createtime, deleteflag
+    </sql>
+
+    <select id="findOrderList" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM gorder
+        WHERE gorder_state = #{gorderState,jdbcType=INTEGER}
+        AND deleteflag IS NULL
+    </select>
+
+    <select id="getSoftDeleteList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM gorder
+        WHERE deleteflag IS NOT NULL
+    </select>
+
+    <update id="orderChangeState">
+        UPDATE gorder
+        SET gorder_state = #{gorderState}
+        WHERE gorder_id = #{gorderId}
+    </update>
+
+    <select id="getToDayOrderInfo" resultType="java.util.HashMap">
+        SELECT
+        COALESCE(sum(total),0)AS priceSum,
+        count(*) AS orderCount,
+        COALESCE(sum(num),0)AS goodsSum
+        FROM gorder
+        INNER JOIN orderdetial
+        ON gorder.gorder_id = orderdetial.gorder_id
+        WHERE to_days(gorder.createtime)=to_days(now())
+        AND gorder.gorder_state != 0
+    </select>
+
+    <select id="getHistoryOrderInfo" resultType="java.util.HashMap">
+        SELECT
+        COALESCE(sum(total),0)AS historyPriceSum,
+        count(*) AS historyOrderCount,
+        COALESCE(sum(num),0)AS historyGoodsSum
+        FROM gorder
+        INNER JOIN orderdetial
+        ON gorder.gorder_id = orderdetial.gorder_id
+        WHERE to_days(gorder.createtime) &lt;= to_days(now())
+        AND gorder.gorder_state != 0
+    </select>
+
+    <select id="getOrderCountByDay" parameterType="int" resultType="java.util.HashMap">
+        SELECT count(*) AS 'value',DATE(createtime) days,gorder_state
+        FROM gorder
+        WHERE deleteflag IS NULL
+        AND gorder_state = #{gorderState}
+        AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(createtime)
+        GROUP BY days
+    </select>
+
+</mapper>

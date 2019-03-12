@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+<title>管理员回收站-贝贝母婴后台管理系统</title>
+</head>
+<body>
+<div class="main-wrap">
+	<div th:replace="admin/public/left-menu::left-menu"></div>
+	<div class="content-wrap">
+		<header th:replace="admin/public/top-menu::top-menu"></header>
+		<main class="main-cont content mCustomScrollbar">
+			<div class="page-wrap">
+				<!--开始::内容-->
+				<section class="page-hd">
+					<header>
+						<h2 class="title">管理员回收站</h2>
+						<p class="title-description">
+							已被软删除的管理员，不可用，恢复后可用
+						</p>
+					</header>
+					<hr>
+				</section>
+				<table class="table table-bordered table-striped table-hover">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>管理员名称</th>
+						<th>登录密码</th>
+						<th>邮箱地址</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="item:${list}" class="cen">
+						<td th:text="${item.adminId}"></td>
+						<td><a href="#" th:text="${item.name}"></a></td>
+						<td th:text="${item.password}"></td>
+						<td th:text="${item.email}"></td>
+						<td th:text="${#dates.format(item.createtime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td>
+							<a title="编辑"  th:onclick="'javascript:edit('+${item.adminId}+');'" class="mr-5">编辑</a>
+							<a title="恢复"  th:onclick="'javascript:recover('+${item.adminId}+');'" class="mr-5">恢复</a>
+							<a title="删除" th:if="${item.name!='admin'}" th:onclick="'javascript:del('+${item.adminId}+');'">删除</a>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<!--开始::结束-->
+			</div>
+		</main>
+		<footer th:replace="admin/public/footer::footer"></footer>
+	</div>
+</div>
+</body>
+<script>
+    /*编辑信息页面*/
+	function edit(id) {
+        var title = '管理员信息编辑';
+        var w = 700;
+        var h = 500;
+        var url = baseName+"/admin/admin/adminEditView"+"?id="+id;
+        $.get(url);
+        layer_show(title,url,w,h);
+    }
+
+    /*恢复管理员*/
+    function recover(id) {
+        var url =  baseName + "/admin/admin/adminRecover";
+        $.get(url,{"id":id},function(data){
+            if (data.state == 1){
+                layer.msg(data.msg, {icon: 1,time:1500});
+                setTimeout(refresh,1500);//重置表单
+            }else{
+                layer.msg(data.msg, {icon: 2,time:1500});
+            }
+        },"json");
+    }
+
+    /*软删除管理员*/
+    function del(id) {
+        layer.confirm('删除后不可恢复，确定要删除吗？', {
+            btn: ['不用劝了','考虑一下'] //按钮
+        }, function(){
+            var url =  baseName + "/admin/admin/adminDel";
+            $.get(url,{"id":id},function(data){
+				if (data.state == 1){
+                    layer.msg(data.msg, {icon: 1,time:1500});
+                    setTimeout(refresh,1500);//重置表单
+				}else{
+                    layer.msg(data.msg, {icon: 2,time:1500});
+				}
+			},"json");
+
+        }, function(){});
+    }
+
+</script>
+</html>

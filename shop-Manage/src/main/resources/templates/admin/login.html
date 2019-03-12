@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+    <title>登录-贝贝母婴后台管理系统</title>
+</head>
+<body class="login-page">
+	<section class="login-contain">
+		<header>
+			<h1>贝贝母婴后台管理系统</h1>
+			<p>bbmy management system</p>
+		</header>
+		<div class="form-content">
+			<form id="form" method="post">
+			<ul>
+				<li>
+					<div class="form-group">
+						<label class="control-label" id="nameLabel">管理员账号：</label>
+						<input value="admin" type="text" placeholder="管理员账号..." name="name" class="form-control form-underlined" id="adminName"/>
+					</div>
+				</li>
+				<li>
+					<div class="form-group">
+						<label class="control-label" id="passLabel">管理员密码：</label>
+						<input value="123456" type="password" placeholder="管理员密码..." name="password" class="form-control form-underlined" id="adminPwd"/>
+					</div>
+				</li>
+				<li>
+					<button class="btn btn-lg btn-block" type="submit" id="entry">立即登录</button>
+				</li>
+				<li>
+					<p class="btm-info">©Copyright 2018-2020 <a href="#" target="_blank" title="DeathGhost">bbmy.cn</a></p>
+					<address class="btm-info">天津市西青区</address>
+				</li>
+			</ul>
+			</form>
+		</div>
+	</section>
+    <footer th:replace="admin/public/footer::footer"></footer>
+</body>
+<script th:src="@{/admin/plugs/nice-validator/jquery.validator.min.js?local=zh-CN}"></script>
+<script th:inline="javascript">
+    //表单验证规则
+    $("#form").validator({
+        theme:'bootstrap',  //主题
+        timely:3,           //输入框失去焦点和改变值并且详细提示每个规则的结果
+        focusCleanup:true,  //输入框获得焦点时清除验证消息
+        stopOnError:false,   //在第一次错误时停止验证
+        showOk :'完成',     //否显示成功提示
+        fields: {           //需要验证的字段及其规则
+            name:{
+                rule:"管理员名称:required;length(1~20)",
+                target:"#nameLabel"
+            },
+            password:{
+                rule:"密码:required;length(6~20)",
+                target:"#passLabel"
+            }
+        }
+    });
+
+	/*提交表单*/
+    $('#form').on('valid.form', function(e, form){
+        $.ajax({
+            type: "POST",
+            url: baseName+"/admin/admin/checkLogin",
+            data: $("#form").serialize(),
+            success : function (data) {
+                if (data.state == 1){
+                    window.location.href = baseName+"/admin/admin/index";
+                }else{
+                    layer.msg(data.msg, {icon: 2,time:1500});
+                }
+            }
+        })
+    });
+</script>
+</html>

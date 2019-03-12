@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stm.shop.dao.GclassifyMapper">
+  <resultMap id="BaseResultMap" type="com.stm.shop.entity.Gclassify">
+    <id column="gclass_id" jdbcType="INTEGER" property="gclassId" />
+    <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
+    <result column="fid" jdbcType="INTEGER" property="fid" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="deleteflag" jdbcType="INTEGER" property="deleteflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    gclass_id, classify_name, fid, createtime, deleteflag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from gclassify
+    where gclass_id = #{gclassId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from gclassify
+    where gclass_id = #{gclassId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.stm.shop.entity.Gclassify">
+    insert into gclassify (gclass_id, classify_name, fid, 
+      createtime, deleteflag)
+    values (#{gclassId,jdbcType=INTEGER}, #{classifyName,jdbcType=VARCHAR}, #{fid,jdbcType=INTEGER}, 
+      #{createtime,jdbcType=TIMESTAMP}, NULL)
+  </insert>
+  <insert id="insertSelective" parameterType="com.stm.shop.entity.Gclassify">
+    insert into gclassify
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gclassId != null">
+        gclass_id,
+      </if>
+      <if test="classifyName != null">
+        classify_name,
+      </if>
+      <if test="fid != null">
+        fid,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="deleteflag != null">
+        deleteflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gclassId != null">
+        #{gclassId,jdbcType=INTEGER},
+      </if>
+      <if test="classifyName != null">
+        #{classifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="fid != null">
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.stm.shop.entity.Gclassify">
+    update gclassify
+    <set>
+      <if test="classifyName != null">
+        classify_name = #{classifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="fid != null">
+        fid = #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteflag != null">
+        deleteflag = #{deleteflag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where gclass_id = #{gclassId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.stm.shop.entity.Gclassify">
+    update gclassify
+    set classify_name = #{classifyName,jdbcType=VARCHAR},
+      fid = #{fid,jdbcType=INTEGER},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      deleteflag = #{deleteflag,jdbcType=INTEGER}
+    where gclass_id = #{gclassId,jdbcType=INTEGER}
+  </update>
+</mapper>

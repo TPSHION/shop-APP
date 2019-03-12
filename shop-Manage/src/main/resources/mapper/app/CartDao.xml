@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stm.shop.app.dao.CartDao" >
+
+  <resultMap id="BaseResultMap" type="com.stm.shop.entity.CartAssociation">
+    <id column="cart_id" property="cartId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="gooditem_id" property="gooditemId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="deleteflag" property="deleteflag" jdbcType="INTEGER" />
+
+    <!-- Goodsitem -->
+    <association property="goodsitem" column="item_id" javaType="com.stm.shop.entity.Goodsitem">
+      <id column="item_id" property="itemId" jdbcType="INTEGER" />
+      <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+      <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+      <result column="num" property="num" jdbcType="INTEGER" />
+    </association>
+
+    <!-- Goods -->
+    <association property="goods" column="goods_id" javaType="com.stm.shop.entity.Goods">
+      <id column="goods_id" property="goodsId" jdbcType="INTEGER" />
+      <result column="gclass_id" property="gclassId" jdbcType="INTEGER" />
+      <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+      <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+      <result column="content" property="content" jdbcType="VARCHAR"/>
+      <result column="goods_stock" property="goodsStock" jdbcType="INTEGER" />
+      <result column="goods_price" property="goodsPrice" jdbcType="REAL" />
+      <result column="promotion_price" property="promotionPrice" jdbcType="REAL" />
+      <result column="average_grade" property="averageGrade" jdbcType="REAL" />
+      <result column="brand" property="brand" jdbcType="VARCHAR" />
+      <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+      <result column="deleteflag" property="deleteflag" jdbcType="INTEGER" />
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+        cart_id,goods_id,gooditem_id,user_id,goods_num,createtime,deleteflag
+    </sql>
+
+  <sql id="CartAndGoodsAndGoodsitem1">
+        c.cart_id,c.goods_id,c.gooditem_id,c.user_id,c.goods_num,c.createtime,c.deleteflag,
+		g.goods_id, g.gclass_id, g.goods_name, g.goods_stock, g.goods_price, g.promotion_price, g.average_grade,
+        g.brand, g.createtime, g.deleteflag,g.image_url,g.content,
+		i.item_id, i.item_name, i.goods_id, i.num
+    </sql>
+
+  <!-- 根据用户Id查询购物车商品信息 -->
+  <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="CartAndGoodsAndGoodsitem1"/>
+    from cart c
+    LEFT outer JOIN goods g on c.goods_id = g.goods_id
+    LEFT outer JOIN goodsitem i on c.gooditem_id = i.item_id
+    where c.deleteflag IS NULL and c.user_id = #{id}
+  </select>
+
+  <insert id="insertCart" parameterType="com.stm.shop.entity.Cart">
+        insert into cart (cart_id, goods_id, gooditem_id, user_id, goods_num, createtime, deleteflag)
+        VALUES (DEFAULT, #{goodsId}, #{gooditemId}, #{userId}, 1, DEFAULT, NULL)
+    </insert>
+
+  <update id="deleteGoodsBash" parameterType="java.util.List">
+   update cart
+   set
+    deleteflag=unix_timestamp(now())
+    where goods_id in
+    <foreach item="item" collection="list" open="("  separator="," close=")">
+    #{item}
+    </foreach>
+  </update>
+
+</mapper>

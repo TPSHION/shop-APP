@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header class="top-hd" th:fragment="top-menu">
+    <div class="hd-lt">
+        <a class="icon-reorder"></a>
+    </div>
+    <div class="hd-rt">
+        <ul>
+            <li>
+                <a><i class="icon-user"></i>管理员:<em th:text="${session.admin.name}"></em></a>
+            </li>
+            <li>
+                <a><i class="icon-bell-alt"></i>系统消息</a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" id="JsSignOut"><i class="icon-signout"></i>安全退出</a>
+            </li>
+        </ul>
+    </div>
+    <script th:inline="javascript">
+        //安全退出
+        $('#JsSignOut').click(function(){
+            layer.confirm('确定登出管理中心？', {
+                title:'系统提示',
+                btn: ['确定','取消']
+            }, function(){
+                location.href = baseName+'/admin/admin/logOut';
+            });
+        });
+    </script>
+</header>
+</html>

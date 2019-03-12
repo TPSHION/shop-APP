@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+	<title>评价列表-贝贝母婴后台管理系统</title>
+</head>
+<body style="background: white;">
+<div class="main-wrap">
+	<table class="table table-bordered table-striped table-hover">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>评分</th>
+			<th>评论</th>
+			<th>用户昵称</th>
+			<th>评价时间</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="item:${list}" class="cen">
+			<td th:text="${item.gradeId}"></td>
+			<td th:text="${item.gradeNum}"></td>
+			<td th:text="${item.comment}"></td>
+			<td th:text="${item.user.nickName}"></td>
+			<td th:text="${#dates.format(item.createtime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>

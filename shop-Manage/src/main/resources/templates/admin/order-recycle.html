@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+<title>管理员列表-贝贝母婴后台管理系统</title>
+</head>
+<body>
+<div class="main-wrap">
+	<div th:replace="admin/public/left-menu::left-menu"></div>
+	<div class="content-wrap">
+		<header th:replace="admin/public/top-menu::top-menu"></header>
+		<main class="main-cont content mCustomScrollbar">
+			<div class="page-wrap">
+				<!--开始::内容-->
+				<section class="page-hd">
+					<header>
+						<h2 class="title">已删除订单</h2>
+						<p class="title-description">
+							订单信息列表，订单管理
+						</p>
+					</header>
+					<hr>
+				</section>
+				<table class="table table-bordered table-striped table-hover">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>用户姓名</th>
+						<th>用户昵称</th>
+						<th>收货地址</th>
+                        <th>收货人姓名</th>
+                        <th>收货人电话</th>
+						<th>订单总价</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="item:${list}" class="cen">
+                        <td th:text="${item.gorderId}"></td>
+						<td th:text="${item.user.userName}"></td>
+						<td th:text="${item.user.nickName}"></td>
+						<td th:text="${item.address.province + item.address.city +
+						    item.address.district + item.address.detial}"></td>
+						<td th:text="${item.address.name}"></td>
+                        <td th:text="${item.address.tel}"></td>
+                        <td th:text="${'￥'+#numbers.formatDecimal(item.total, 1, 2)}"></td>
+						<td th:text="${#dates.format(item.createtime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td>
+							<a title="订单详情" th:onclick="'javascript:detial('+${item.gorderId}+');'">订单详情</a>
+							<a title="查看评论" th:if="${item.gorderState==4}" th:onclick="'javascript:showComment('+${item.gorderId }+');'">查看评论</a>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<!--开始::结束-->
+			</div>
+		</main>
+		<footer th:replace="admin/public/footer::footer"></footer>
+	</div>
+</div>
+</body>
+<script>
+    /*编辑信息页面*/
+	function edit(id) {
+        var title = '管理员信息编辑';
+        var w = 700;
+        var h = 500;
+        var url = baseName+"/admin/admin/adminEditView"+"?id="+id;
+        $.get(url);
+        layer_show(title,url,w,h);
+    }
+
+    /*软删除管理员*/
+    function del(id) {
+        layer.confirm('确定要删除吗？', {
+            btn: ['心意已决','还是算了'] //按钮
+        }, function(){
+
+            var url =  baseName + "/admin/admin/adminRecycle";
+            $.get(url,{"id":id},function(data){
+				if (data.state == 1){
+                    layer.msg(data.msg, {icon: 1,time:1500});
+                    setTimeout(refresh,1500);//重置表单
+				}else{
+                    layer.msg(data.msg, {icon: 2,time:1500});
+				}
+			},"json");
+
+        }, function(){});
+    }
+
+</script>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="side-nav" th:fragment="left-menu">
+    <div class="side-logo">
+        <div class="logo">
+				<span class="logo-ico">
+					<i class="i-l-1"></i>
+					<i class="i-l-2"></i>
+					<i class="i-l-3"></i>
+				</span>
+            <strong>贝贝母婴后台管理系统</strong>
+        </div>
+    </div>
+
+    <nav class="side-menu content mCustomScrollbar" data-mcs-theme="minimal-dark">
+        <h2>
+            <a th:href="@{/admin/admin/index}" class="InitialPage"><i class="icon-dashboard"></i>数据概况</a>
+        </h2>
+        <ul>
+            <li>
+                <dl>
+                    <dt>
+                        <i class="icon-columns"></i>商品管理<i class="icon-angle-right"></i>
+                    </dt>
+                    <dd>
+                        <a th:href="@{/admin/goods/getGoodsList}">商品列表</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/goods/goodsAddView}">添加商品</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/goods/goodsRecycleList}">商品回收站</a>
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt>
+                        <i class="icon-inbox"></i>订单管理<i class="icon-angle-right"></i>
+                    </dt>
+                    <dd>
+                        <a th:href="@{/admin/order/orderList(orderState=1)}">待发货订单</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/order/orderList(orderState=0)}">待付款订单</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/order/orderList(orderState=2)}">待收货订单</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/order/orderList(orderState=3)}">待评价订单</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/order/orderList(orderState=4)}">已完成订单</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/order/orderRecycleList}">已删除订单</a>
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt>
+                        <i class="icon-table"></i>商品类别<i class="icon-angle-right"></i>
+                    </dt>
+                    <dd>
+                        <a th:href="@{/admin/classify/getList}">种类列表</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/classify/classifyAddView}">添加类别</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/classify/getRecycleList}">类别回收站</a>
+                    </dd>
+                </dl>
+            </li>
+            <li th:if="${session.admin.name=='admin'}">
+                <dl>
+                    <dt>
+                        <i class="icon-list-alt"></i>管理员管理<i class="icon-angle-right"></i>
+                    </dt>
+                    <dd>
+                        <a th:href="@{/admin/admin/adminList}">管理员列表</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/admin/adminAddView}">添加管理员</a>
+                    </dd>
+                    <dd>
+                        <a th:href="@{/admin/admin/adminRecycleList}">回收站列表</a>
+                    </dd>
+                </dl>
+            </li>
+        </ul>
+    </nav>
+    <footer class="side-footer">© BBMY 版权所有</footer>
+</div>

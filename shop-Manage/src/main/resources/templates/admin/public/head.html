@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title,links,styles)">
+
+    <meta charset="utf-8"/>
+    <title th:replace="${title}">Baby Shop</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name='apple-touch-fullscreen' content='yes'/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="format-detection" content="address=no"/>
+    <link rel="icon" th:href="@{/admin/images/icon/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/admin/css/style.css}" />
+    <script th:src="@{/admin/javascript/jquery.js}"></script>
+    <script th:src="@{/admin/javascript/public.js}"></script>
+    <script th:src="@{/admin/javascript/plug-ins/customScrollbar.min.js}"></script>
+    <script th:src="@{/admin/javascript/plug-ins/layerUi/layer.js}"></script>
+    <script th:src="@{/admin/javascript/plug-ins/pagination.js}"></script>
+    <script th:src="@{/admin/javascript/plug-ins/H-ui.admin.js}"></script>
+
+    <!--/* 页面独有的js文件引入 */-->
+    <th:block th:replace="${links}" />
+    <!--/* 页面独有的css文件引入 */-->
+    <th:block th:replace="${styles}" />
+</head>

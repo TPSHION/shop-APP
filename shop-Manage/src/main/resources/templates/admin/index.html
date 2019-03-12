@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{::script},~{})">
+    <title>后台管理系统-贝贝母婴后台管理系统</title>
+</head>
+<body>
+<div class="main-wrap">
+	<div th:replace="admin/public/left-menu::left-menu"></div>
+	<div class="content-wrap">
+		<header th:replace="admin/public/top-menu::top-menu"></header>
+		<main class="main-cont content mCustomScrollbar">
+			<!--开始::内容-->
+			<div class="page-wrap">
+				<section class="page-hd">
+					<header>
+						<h2 class="title"><i class="icon-home"></i>贝贝母婴后台管理系统</h2>
+						<p class="title-description">
+							平台数据统计，数据可视化，分析更准确
+						</p>
+					</header>
+					<hr>
+				</section>
+
+				<table class="table table-bordered  mb-15 mt-15">
+					<thead>
+						<tr class="cen">
+							<th>今日订单数（单位：单）</th>
+							<th>今日订单额（单位：元）</th>
+							<th>今日销售量（单位：件）</th>
+                            <th>累计订单数（单位：单）</th>
+                            <th>累计订单额（单位：元）</th>
+                            <th>累计销售量（单位：件）</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="cen">
+							<td><b th:text="${list.orderCount}">暂无</b></td>
+							<td><b th:text="${'￥'+#numbers.formatDecimal(list.priceSum, 1, 2)}">暂无</b></td>
+							<td><b th:text="${list.goodsSum}">暂无</b></td>
+                            <td><b th:text="${list.historyOrderCount}">暂无</b></td>
+                            <td><b th:text="${'￥'+#numbers.formatDecimal(list.historyPriceSum, 1, 2)}">暂无</b></td>
+                            <td><b th:text="${list.historyGoodsSum}">暂无</b></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<table class="table table-bordered  mb-15 mt-15">
+					<tbody>
+						<tr class="cen">
+							<td style="width:50%">
+								<div id="demo1" style="height:500px"></div>
+							</td>
+							<td style="width:50%">
+								<div id="demo2" style="height:500px"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+			<!--开始::结束-->
+		</main>
+		<footer th:replace="admin/public/footer::footer"></footer>
+	</div>
+</div>
+</body>
+<script th:src="@{/admin/javascript/plug-ins/echarts.min.js}"></script>
+<script>
+
+    var dom = document.getElementById("demo1");
+    var myChart = echarts.init(dom);
+    var classifyNames=[];
+    var classifyList = [];
+    option = null;
+    option = {
+        title : {
+            text: '商品种类数量图',
+            subtext: '',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            x : 'center',
+            y : 'bottom',
+            selectedMode:false,//标签按钮不可用
+            data:classifyNames
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {
+                    show: true,
+                    type: ['pie', 'funnel']
+                },
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        series : [
+            {
+                name:'商品数量',
+                type:'pie',
+                radius : [30, 110],
+                center : ['50%', '50%'],
+                roseType : 'radius',
+                data:classifyList
+            }
+        ]
+    };
+
+
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+
+    //获取种类及其数量数据
+    function getClassifyCount(){
+        $.ajax({
+            type: "GET",
+            dataType:"json",
+            url: baseName+"/admin/classify/getClassifyCount",
+            success : function (data) {
+                if (data.length>=0){
+                    var item={};
+                    for (var i=0; i<data.length; i++){
+                        classifyNames[i] = data[i].name;
+                        if (data[i].value==0){
+                            item = {
+                                name:data[i].name,
+                                value:0,
+                                labelLine:{
+                                    show:false
+                                },
+                                label:{
+                                    show:false
+                                }
+                            };
+                            classifyList.push(item);
+                        }else{
+                            classifyList.push(data[i]);
+                        }
+
+                    }
+                    myChart.hideLoading();    //隐藏加载动画
+
+                    option.legend.data = classifyNames;
+                    option.series[0].data = classifyList;
+
+                    myChart.setOption(option);
+                }else{
+                    myChart.hideLoading();
+                    layer.msg("数据获取失败！", {icon: 2,time:1500});
+                }
+            },
+            error : function(errorMsg) {
+                //请求失败时执行该函数
+                myChart.hideLoading();
+                layer.msg("数据获取失败！", {icon: 2,time:1500});
+            }
+        })
+    }
+
+
+    var dom2 = document.getElementById("demo2");
+    var myChart2 = echarts.init(dom2);
+    option2 = null;
+    option2 = {
+        title : {
+            text: '过去七天交易数据图',
+            subtext: '',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {
+                    show: true,
+                    type: ['pie', 'funnel']
+                },
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        legend: {
+            x : 'center',
+            y : 'bottom',
+            data: ['待付款', '待发货','待收货','待评价','已完成']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '8%',
+            containLabel: true
+        },
+        xAxis:  {
+            type: 'value'
+        },
+        yAxis: {
+            type: 'category',
+            data: ['周一','周二','周三','周四','周五','周六','周日']
+        },
+        series: [
+            {
+                name: '待付款',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [320, 302, 301, 334, 390, 330, 320]
+            },
+            {
+                name: '待发货',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+                name: '待收货',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+                name: '待评价',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [150, 212, 201, 154, 190, 330, 410]
+            },
+            {
+                name: '已完成',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [820, 832, 901, 934, 1290, 1330, 1320]
+            }
+        ]
+    };
+
+
+
+    //数组去重排序
+    function distinctSort(arr){
+        var res=[];
+        for(var i=0;i<arr.length;i++){
+            if(res.indexOf(arr[i])==-1){
+                res.push(arr[i]);
+                res.sort();
+            }
+        }
+        return res;
+    }
+
+    //返回aa天前（负数）或者后（正数）的日期
+    function fun_date(aa){
+        var date1 = new Date(),
+            time1=date1.getFullYear()+"-"+(date1.getMonth()+1)+"-"+date1.getDate();//time1表示当前时间
+        var date2 = new Date(date1);
+        date2.setDate(date1.getDate()+aa);
+        var time2 = date2.getFullYear()+"-"+PrefixInteger(date2.getMonth()+1,2)+"-"+PrefixInteger(date2.getDate()+1,2);
+        return time2;
+    }
+
+    //字符长度不足补零num数字，n为长度
+    function PrefixInteger(num, n) {
+        return (Array(n).join(0) + num).slice(-n);
+    }
+
+    //获取某个元素下标,arrays :传入的数组,obj:需要获取下标的元素
+    function contains(arrays, obj) {
+        var i = arrays.length;
+        while (i--) {
+            if (arrays[i] === obj) {
+                return i;
+            }
+        }
+        return false;
+    }
+
+    //获取订单交易数据
+    function getOrderCount(){
+        $.ajax({
+            type: "GET",
+            dataType:"json",
+            url: baseName+"/admin/order/getOrderCountByDay",
+            success : function (data) {
+                if (data.length>=0){
+                    var state0 = ['','','','','','',''];//待付款
+                    var state1 = ['','','','','','',''];//待发货
+                    var state2 = ['','','','','','',''];//待收货
+                    var state3 = ['','','','','','',''];//待评价
+                    var state4 = ['','','','','','',''];//已完成
+                    var days = [];
+                    var item={};
+                    for (var i=0; i<=6; i++){
+                        days.push(fun_date(-i));//获取近七天天数，包含当天
+                    }
+                    days = distinctSort(days);//去重排序
+
+                    for(var i=0; i<data.length; i++){
+                        switch (data[i].gorder_state){
+                            case 0://待付款
+                                state0[contains(days,data[i].days)]=data[i].value;
+                                break;
+                            case 1://待发货
+                                state1[contains(days,data[i].days)]=data[i].value;
+                                break;
+                            case 2://待收货
+                                state2[contains(days,data[i].days)]=data[i].value;
+                                break;
+                            case 3://待评价
+                                state3[contains(days,data[i].days)]=data[i].value;
+                                break;
+                            case 4://已完成
+                                state4[contains(days,data[i].days)]=data[i].value;
+                                break;
+                        }
+                    }
+                    option2.yAxis.data = days;
+                    option2.series[0].data = state0;
+                    option2.series[1].data = state1;
+                    option2.series[2].data = state2;
+                    option2.series[3].data = state3;
+                    option2.series[4].data = state4;
+
+                    myChart2.hideLoading();    //隐藏加载动画
+
+                    myChart2.setOption(option2);
+
+                }else{
+                    myChart2.hideLoading();
+                    layer.msg("数据获取失败！", {icon: 2,time:1500});
+                }
+            },
+            error : function(errorMsg) {
+                //请求失败时执行该函数
+                myChart2.hideLoading();
+                layer.msg("数据获取失败！", {icon: 2,time:1500});
+            }
+        })
+    }
+
+    myChart2.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    window.onload = function () {
+        getClassifyCount();
+        getOrderCount();
+    };
+</script>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/public/head::head(~{::title},~{},~{})">
+<title>订单详情-贝贝母婴后台管理系统</title>
+</head>
+<body style="background: white;">
+	<div class="page-wrap">
+		<!--开始::内容-->
+		<section class="page-hd">
+			<header>
+				<h2 class="title">订单详情</h2>
+				<p class="title-description">
+					订单详细信息
+				</p>
+			</header>
+			<hr>
+		</section>
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+			<tr>
+				<th>ID</th>
+				<th>名称</th>
+				<th>单价</th>
+				<th>用户评分</th>
+				<th>商标</th>
+				<th>图片</th>
+                <th>数量</th>
+                <th>总价</th>
+				<th>创建时间</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="item:${list}" class="cen">
+				<td th:text="${item?.goodsOrderId}"></td>
+				<td th:text="${item?.goods?.goodsName}"></td>
+				<td th:text="${'￥'+#numbers.formatDecimal(item?.price, 1, 2)}"></td>
+				<td th:text="${item?.goods?.averageGrade}"></td>
+				<td th:text="${item?.goods?.brand}"></td>
+				<td>
+                    <a th:onclick="'javascript:showImg(\''+@{${item?.goods?.imageUrl}}+'\');'">
+                        <img th:src="@{${item?.goods?.imageUrl}}" style="height: 50px;"/>
+                    </a>
+                </td>
+                <td th:text="${item?.num}"></td>
+                <td th:text="${'￥'+#numbers.formatDecimal(item?.price*item?.num, 1, 2)}"></td>
+				<td th:text="${#dates.format(item?.createtime,'yyyy-MM-dd HH:mm:ss')}"></td>
+			</tr>
+			</tbody>
+		</table>
+		<!--开始::结束-->
+	</div>
+</body>
+<script>
+    /*弹出层中显示图片*/
+    function showImg(url) {
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 1,
+            area:['70%','auto'],
+            skin: 'layui-layer-nobg', //没有背景色
+            shadeClose: true,
+            content: "<img width='100%;' src='" + url + "'/>"
+        });
+    }
+</script>
+</html>
